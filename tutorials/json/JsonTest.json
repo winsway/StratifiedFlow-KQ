@@ -1,0 +1,15 @@
+{
+    "Pipe": {
+        "diameter": 0.5
+    },
+    "transportProperties": {
+
+    },
+    "turbulence": "laminar",
+    "Solver": {
+
+    },
+    "IO": {
+
+    }
+}

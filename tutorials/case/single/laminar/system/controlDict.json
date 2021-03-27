@@ -1,0 +1,55 @@
+{
+    "geometric": {
+        "diameter": 0.0243,
+        "NX": 50,
+        "NY": 50
+    },
+    "transportProperties": {
+        "Oil": {
+            "Viscosity": 1,
+            "Density": 1
+        },
+        "Water": {
+            "Viscosity": 1,
+            "Density": 1
+        }
+    },
+    "Field": {
+        "Velocity": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": "noSlip"
+            }
+        },
+        "Viscosity": {
+            "internal value": 1e-3,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "Density": {
+            "internal value": 1000,
+            "boundary condition": {
+                "type": null
+            }
+        }
+    },
+    "turbulence": "laminar",
+    "Uequation": {
+        "Solve Name": "SIPSOL",
+        "Relax Factor": 1.0,
+        "Convergence Criterion": 1e-6,
+        "Sub Loop Number": 20
+    },
+    "IO": {
+        "Mesh": {
+            "CalculateGeo": true,
+            "PhysicalGeo": true
+        },
+        "Field": {
+            "Velocity": true,
+            "Viscosity": true,
+            "Density": true
+        }
+    }
+}

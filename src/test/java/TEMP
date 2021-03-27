@@ -1,0 +1,209 @@
+  /**
+     * 计算油相温度场
+     */
+    void cacToil() {
+        double URF = 0.8;
+        double URFFI = 1. / URF;
+        double Fe, Fw, Fn, Fs, Ft;
+        double De, Dw, Dn, Ds;
+        double Spad, Scad, Sp, Sc;
+        double muw, mue, mus, mun, mup;
+        double gamw, game, gams, gamn;
+        double simgaT = 0.7;
+        Label flagT = new Label("Toil");
+
+        for (int z = 1; z < TOil.getNewField()[0][0].length - 1; ++z) {
+            for (int y = 1; y < TOil.getNewField()[0].length - 1; ++y) {
+                for (int x = 1; x < TOil.getNewField().length - 1; ++x) {
+                    //<editor-fold>
+                    flagT.setFlag(TOil.getBoundary(), x, y);
+                    double vol
+                            = OilMesh.getDXU(x - 1) * OilMesh.getDYV(y - 1)
+                            * OilMesh.J(OilMesh.gettPx(x), OilMesh.gettPy(y));
+                    Fw = 0;
+                    Fe = 0;
+                    Fs = 0;
+                    Fn = 0;
+//
+                    mup = (lambdaOil[x][y][z] + mutOil[x][y][z] * cpOil[x][y][z] / simgaT);
+                    muw = (lambdaOil[x - 1][y][z] + mutOil[x - 1][y][z] * cpOil[x - 1][y][z] / simgaT);
+                    mue = (lambdaOil[x + 1][y][z] + mutOil[x + 1][y][z] * cpOil[x + 1][y][z] / simgaT);
+                    mus = (lambdaOil[x][y - 1][z] + mutOil[x][y - 1][z] * cpOil[x][y - 1][z] / simgaT);
+                    mun = (lambdaOil[x][y + 1][z] + mutOil[x][y + 1][z] * cpOil[x][y + 1][z] / simgaT);
+//得到gamma
+                    gamw = faceValue(muw, mup - muw, OilMesh.gettPx(x - 1), OilMesh.getTx(x - 1), OilMesh.gettPx(x));
+                    game = faceValue(mup, mue - mup, OilMesh.gettPx(x), OilMesh.getTx(x), OilMesh.gettPx(x + 1));
+                    gams = faceValue(mus, mup - mus, OilMesh.gettPy(y - 1), OilMesh.getTy(y - 1), OilMesh.gettPy(y));
+                    gamn = faceValue(mup, mun - mup, OilMesh.gettPy(y), OilMesh.getTy(y), OilMesh.gettPy(y + 1));
+//GET d
+                    Dw = gamw * OilMesh.getDYV(y - 1) / OilMesh.getDXP(x - 1);
+                    De = game * OilMesh.getDYV(y - 1) / OilMesh.getDXP(x);
+                    Ds = gams * OilMesh.getDXU(x - 1) / OilMesh.getDYP(y - 1);
+                    Dn = gamn * OilMesh.getDXU(x - 1) / OilMesh.getDYP(y);
+//系数
+                    coeToil.aw[x][y][z] = (1 - flagT.w) * (Math.max(Fw, 0.0) + Dw);//w
+                    coeToil.ae[x][y][z] = (1 - flagT.e) * (Math.max(-Fe, 0.0) + De);//e
+                    coeToil.as[x][y][z] = (1 - flagT.s) * (Math.max(Fs, 0.0) + Ds);//s
+                    coeToil.an[x][y][z] = (1 - flagT.n) * (Math.max(-Fn, 0.0) + Dn);//n
+//设定附加源项
+                    Sp = 0;
+                    Spad
+                            = flagT.w
+                            * Spad1(TOil.getBoundary().getType(x - 1, y, z),
+                                    OilMesh.getDYV(y - 1), vol, OilMesh.getDXP(x - 1),
+                                    gamw, Fw, 1)
+                            + flagT.e
+                            * Spad2(TOil.getBoundary().getType(x + 1, y, z),
+                                    OilMesh.getDYV(y - 1), vol, OilMesh.getDXP(x),
+                                    game, Fe, 1)
+                            + flagT.s
+                            * Spad1(TOil.getBoundary().getType(x, y - 1, z),
+                                    OilMesh.getDXU(x - 1), vol, OilMesh.getDYP(y - 1),
+                                    gams, Fs, 1)
+                            + flagT.n
+                            * Spad2(TOil.getBoundary().getType(x, y + 1, z),
+                                    OilMesh.getDXU(x - 1), vol, OilMesh.getDYP(y),
+                                    gamn, Fn, 1);
+//得到ap系数
+                    coeToil.ap[x][y][z]
+                            = coeToil.aw[x][y][z] + coeToil.ae[x][y][z]
+                            + coeToil.as[x][y][z] + coeToil.an[x][y][z]
+                            + (Fe - Fw) + (Fn - Fs)
+                            - (Sp + Spad) * vol;
+//得到源项
+                    Sc = 0;
+                    Scad
+                            = flagT.w
+                            * Scad1(TOil.getBoundary().getType(x - 1, y, z),
+                                    OilMesh.getDYV(y - 1), vol, OilMesh.getDXP(x - 1),
+                                    gamw, Fw, TOil.getNewField(x - 1, y, z), 0, 1, 1)
+                            + flagT.e
+                            * Scad2(TOil.getBoundary().getType(x + 1, y, z),
+                                    OilMesh.getDYV(y - 1), vol, OilMesh.getDXP(x),
+                                    game, Fe, TOil.getNewField(x + 1, y, z), 0, 1, 1)
+                            + flagT.s
+                            * Scad1(TOil.getBoundary().getType(x, y - 1, z),
+                                    OilMesh.getDXU(x - 1), vol, OilMesh.getDYP(y - 1),
+                                    gams, Fs, TOil.getNewField(x, y - 1, z), 0, 1, 1)
+                            + flagT.n
+                            * Scad2(TOil.getBoundary().getType(x, y + 1, z),
+                                    OilMesh.getDXU(x - 1), vol, OilMesh.getDYP(y),
+                                    gamn, Fn, TOil.getNewField(x, y + 1, z), 0, 1, 1);
+                    coeToil.b[x][y][z] = (Sc + Scad) * vol;
+                    //</editor-fold>
+//under-relaxization
+                    coeToil.b[x][y][z]
+                            = coeToil.b[x][y][z] + (URFFI - 1.0) * coeToil.ap[x][y][z]
+                            * TOil.getOldField(x, y, z);
+                    coeToil.ap[x][y][z] = (coeToil.ap[x][y][z]) * URFFI;
+                }
+            }
+        }
+        TOil.getLog().rl = MatrixSolver.gaussSeidel(TOil.getNewField(), coeToil, sysOil);
+        TOil.getLog().log("Toil");
+    }
+
+    /**
+     * 计算水相温度场
+     */
+    void cacTwater() {
+        double URF = 0.8;
+        double URFFI = 1. / URF;
+        double Fe, Fw, Fn, Fs, Ft;
+        double De, Dw, Dn, Ds;
+        double Spad, Scad, Sp, Sc;
+        double muw, mue, mus, mun, mup;
+        double gamw, game, gams, gamn;
+        double simgaT = 0.7;
+        Label flagT = new Label("Toil");
+
+        for (int z = 1; z < TWater.getNewField()[0][0].length - 1; ++z) {
+            for (int y = 1; y < TWater.getNewField()[0].length - 1; ++y) {
+                for (int x = 1; x < TWater.getNewField().length - 1; ++x) {
+                    //<editor-fold>
+                    flagT.setFlag(TWater.getBoundary(), x, y);
+                    double vol
+                            = WaterMesh.getDXU(x - 1) * WaterMesh.getDYV(y - 1)
+                            * WaterMesh.J(WaterMesh.gettPx(x), WaterMesh.gettPy(y));
+                    Fw = 0;
+                    Fe = 0;
+                    Fs = 0;
+                    Fn = 0;
+//
+                    mup = (lambdaWater[x][y][z] + mutWater[x][y][z] * cpWater[x][y][z] / simgaT);
+                    muw = (lambdaWater[x - 1][y][z] + mutWater[x - 1][y][z] * cpWater[x - 1][y][z] / simgaT);
+                    mue = (lambdaWater[x + 1][y][z] + mutWater[x + 1][y][z] * cpWater[x + 1][y][z] / simgaT);
+                    mus = (lambdaWater[x][y - 1][z] + mutWater[x][y - 1][z] * cpWater[x][y - 1][z] / simgaT);
+                    mun = (lambdaWater[x][y + 1][z] + mutWater[x][y + 1][z] * cpWater[x][y + 1][z] / simgaT);
+//得到gamma
+                    gamw = faceValue(muw, mup - muw, WaterMesh.gettPx(x - 1), WaterMesh.getTx(x - 1), WaterMesh.gettPx(x));
+                    game = faceValue(mup, mue - mup, WaterMesh.gettPx(x), WaterMesh.getTx(x), WaterMesh.gettPx(x + 1));
+                    gams = faceValue(mus, mup - mus, WaterMesh.gettPy(y - 1), WaterMesh.getTy(y - 1), WaterMesh.gettPy(y));
+                    gamn = faceValue(mup, mun - mup, WaterMesh.gettPy(y), WaterMesh.getTy(y), WaterMesh.gettPy(y + 1));
+//GET d
+                    Dw = gamw * WaterMesh.getDYV(y - 1) / WaterMesh.getDXP(x - 1);
+                    De = game * WaterMesh.getDYV(y - 1) / WaterMesh.getDXP(x);
+                    Ds = gams * WaterMesh.getDXU(x - 1) / WaterMesh.getDYP(y - 1);
+                    Dn = gamn * WaterMesh.getDXU(x - 1) / WaterMesh.getDYP(y);
+//系数
+                    coeTwater.aw[x][y][z] = (1 - flagT.w) * (Math.max(Fw, 0.0) + Dw);//w
+                    coeTwater.ae[x][y][z] = (1 - flagT.e) * (Math.max(-Fe, 0.0) + De);//e
+                    coeTwater.as[x][y][z] = (1 - flagT.s) * (Math.max(Fs, 0.0) + Ds);//s
+                    coeTwater.an[x][y][z] = (1 - flagT.n) * (Math.max(-Fn, 0.0) + Dn);//n
+//设定附加源项
+                    Sp = 0;
+                    Spad
+                            = flagT.w
+                            * Spad1(TWater.getBoundary().getType(x - 1, y, z),
+                                    WaterMesh.getDYV(y - 1), vol, WaterMesh.getDXP(x - 1),
+                                    gamw, Fw, 1)
+                            + flagT.e
+                            * Spad2(TWater.getBoundary().getType(x + 1, y, z),
+                                    WaterMesh.getDYV(y - 1), vol, WaterMesh.getDXP(x),
+                                    game, Fe, 1)
+                            + flagT.s
+                            * Spad1(TWater.getBoundary().getType(x, y - 1, z),
+                                    WaterMesh.getDXU(x - 1), vol, WaterMesh.getDYP(y - 1),
+                                    gams, Fs, 1)
+                            + flagT.n
+                            * Spad2(TWater.getBoundary().getType(x, y + 1, z),
+                                    WaterMesh.getDXU(x - 1), vol, WaterMesh.getDYP(y),
+                                    gamn, Fn, 1);
+//得到ap系数
+                    coeTwater.ap[x][y][z]
+                            = coeTwater.aw[x][y][z] + coeTwater.ae[x][y][z]
+                            + coeTwater.as[x][y][z] + coeTwater.an[x][y][z]
+                            + (Fe - Fw) + (Fn - Fs)
+                            - (Sp + Spad) * vol;
+//得到源项
+                    Sc = 0;
+                    Scad
+                            = flagT.w
+                            * Scad1(TWater.getBoundary().getType(x - 1, y, z),
+                                    WaterMesh.getDYV(y - 1), vol, WaterMesh.getDXP(x - 1),
+                                    gamw, Fw, TWater.getNewField(x - 1, y, z), 0, 1, 1)
+                            + flagT.e
+                            * Scad2(TWater.getBoundary().getType(x + 1, y, z),
+                                    WaterMesh.getDYV(y - 1), vol, WaterMesh.getDXP(x),
+                                    game, Fe, TWater.getNewField(x + 1, y, z), 0, 1, 1)
+                            + flagT.s
+                            * Scad1(TWater.getBoundary().getType(x, y - 1, z),
+                                    WaterMesh.getDXU(x - 1), vol, WaterMesh.getDYP(y - 1),
+                                    gams, Fs, TWater.getNewField(x, y - 1, z), 0, 1, 1)
+                            + flagT.n
+                            * Scad2(TWater.getBoundary().getType(x, y + 1, z),
+                                    WaterMesh.getDXU(x - 1), vol, WaterMesh.getDYP(y),
+                                    gamn, Fn, TWater.getNewField(x, y + 1, z), 0, 1, 1);
+                    coeTwater.b[x][y][z] = (Sc + Scad) * vol;
+                    //</editor-fold>
+//under-relaxization
+                    coeTwater.b[x][y][z]
+                            = coeTwater.b[x][y][z] + (URFFI - 1.0) * coeTwater.ap[x][y][z]
+                            * TWater.getOldField(x, y, z);
+                    coeTwater.ap[x][y][z] = (coeTwater.ap[x][y][z]) * URFFI;
+                }
+            }
+        }
+        TWater.getLog().rl = MatrixSolver.gaussSeidel(TWater.getNewField(), coeTwater, sysWater);
+        TWater.getLog().log("Twater");
+    }

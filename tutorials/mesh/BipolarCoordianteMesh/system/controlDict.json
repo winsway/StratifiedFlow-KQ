@@ -1,0 +1,21 @@
+{
+    "geometric": {
+        "diameter": 0.25,
+        "NX": 100,
+        "NY": 100
+    },
+    "transportProperties": {
+
+    },
+    "turbulence": "laminar",
+    "Solver": {
+
+    },
+    "IO": {
+        "Mesh": {
+            "CalculateGeo": true,
+            "PhysicalGeo": true
+        },
+        "Field": {}
+    }
+}
