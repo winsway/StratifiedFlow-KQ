@@ -468,7 +468,7 @@ public class KOmegaTF {
         double muw, mue, mus, mun, mup;
         double gamw, game, gams, gamn;
 //        
-        double sigma2 = 0.5, betastar = 0.09;
+        double sigma2 = 2.0, betastar = 0.09;
         double GEN = 0;
 //        
         int i = mesh.numPx();
@@ -649,7 +649,7 @@ public class KOmegaTF {
         double muw, mue, mus, mun, mup;
         double gamw, game, gams, gamn;
 //        
-        double sigma1 = 0.5, alpha = 0.555, beta = 0.075;
+        double sigma1 = 2.0, alpha = 0.555, beta = 0.075;
         int i = mesh.numPx();
         int j = mesh.numPy();
         Coefficient coeW = new Coefficient(i, j);

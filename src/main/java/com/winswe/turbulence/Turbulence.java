@@ -7,6 +7,7 @@ import com.winswe.io.IOobject;
 import com.winswe.matrix.solve.SolverPerformance;
 import com.winswe.mesh.Structed2D;
 import com.winswe.turbulence.kepsilon.KEpsilonModel;
+import com.winswe.turbulence.komega.KOmegaModel;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
@@ -107,7 +108,7 @@ public abstract class Turbulence {
         if ("KEpsilon".equals(name)) {
             return new KEpsilonModel(velocity, dynamicViscosity, density, mesh, iOobject);
         } else if ("KOmega".equals(name)) {
-            return null;
+            return new KOmegaModel(velocity, dynamicViscosity, density, mesh, iOobject);
         } else if ("SSTKOmega".equals(name)) {
             return null;
         } else {

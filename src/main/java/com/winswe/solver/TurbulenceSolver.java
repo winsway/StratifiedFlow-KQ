@@ -108,7 +108,7 @@ public class TurbulenceSolver {
      * solve equation
      */
     public void solve() {
-        UEquation UEqu = new UEquation(2.2301, mesh, U, mueff, density, iOobject);
+        UEquation UEqu = new UEquation(88, mesh, U, mueff, density, iOobject);
         simple.getResult().add(UEqu.getSolverPerformance());
         turbulence.setSolverPerformance(simple.getResult());
 //        do {
@@ -116,7 +116,7 @@ public class TurbulenceSolver {
 //            UEqu.solve();
 //        } while (simple.loop());
 //        turbulence.setTurPar();
-//        iOobject.outPutField();
+////        iOobject.outPutField();
 
         do {
             UEqu.discrete();
@@ -147,8 +147,8 @@ public class TurbulenceSolver {
             for (int X = 1; X <= mesh.getNX(); ++X) {
                 IJ = mesh.getCellIndex(X, Y);
                 mueff.getFI()[IJ]
-                        = mum.getFI()[IJ]
-                        + turbulence.getEddyViscosity().getFI()[IJ];
+                        = (mum.getFI()[IJ]
+                        + 0.25 * turbulence.getEddyViscosity().getFI()[IJ]);
             }
         }
     }

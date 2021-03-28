@@ -15,7 +15,7 @@ import org.junit.Test;
 public class TurbulenceSolverTest {
 
     @Test
-    public void waterFlow() {
+    public void waterKEpsilonFlow() {
         System.out.println("readConfigure");
         String path = "./tutorials/case/single/turbulence";
         String caseName = "kepsilon";
@@ -30,4 +30,35 @@ public class TurbulenceSolverTest {
         turbulenceSolver.outPutFields();
     }
 
+    @Test
+    public void waterKOmegaFlow() {
+        System.out.println("readConfigure");
+        String path = "./tutorials/case/single/turbulence";
+        String caseName = "komega";
+        TurbulenceSolver turbulenceSolver = new TurbulenceSolver(path, caseName);
+        turbulenceSolver.readConfigure();
+        //for mesh
+        turbulenceSolver.createMesh();
+        turbulenceSolver.outPutMesh();
+        //for field
+        turbulenceSolver.createField();
+        turbulenceSolver.solve();
+        turbulenceSolver.outPutFields();
+    }
+
+    @Test
+    public void waterSSTKOmegaFlow() {
+        System.out.println("readConfigure");
+        String path = "./tutorials/case/single/turbulence";
+        String caseName = "sstkomega";
+        TurbulenceSolver turbulenceSolver = new TurbulenceSolver(path, caseName);
+        turbulenceSolver.readConfigure();
+        //for mesh
+        turbulenceSolver.createMesh();
+        turbulenceSolver.outPutMesh();
+        //for field
+        turbulenceSolver.createField();
+        turbulenceSolver.solve();
+        turbulenceSolver.outPutFields();
+    }
 }

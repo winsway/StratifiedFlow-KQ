@@ -24,7 +24,7 @@ public class SimpleControl {
     /**
      * max iteration number
      */
-    private final int maxNubmer = 10000;
+    private final int maxNubmer = 1000;
 
     private int count;
 

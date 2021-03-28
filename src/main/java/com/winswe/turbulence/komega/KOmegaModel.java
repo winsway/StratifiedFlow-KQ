@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.winswe.turbulence.kepsilon;
+package com.winswe.turbulence.komega;
 
 import com.winswe.field.VolScalarField;
 import com.winswe.io.IOobject;
@@ -20,25 +20,26 @@ import java.util.List;
  * @author winswe <halo.winswe@gmail.com>
  * @date 2021年3月25日 下午9:01:09
  */
-public class KEpsilonModel extends Turbulence {
+public class KOmegaModel extends Turbulence {
 
     private final KEquation kEquation;
-    private final EpsilonEquation epsilonEquation;
+    private final OmegaEquation omegaEquation;
 
     private final VolScalarField k;
-    private final VolScalarField epsilon;
+    private final VolScalarField omega;
     private final VolScalarField S;
 
     protected static double sigmak;
-    protected static double sigmae;
+    protected static double sigmaOmega;
     protected static double Cu;
     protected static double Cu25;
     protected static double Cu75;
     protected static double CTRANS;
-    protected static double Ce1;
-    protected static double Ce2;
+    protected static double alpha;
+    protected static double beta;
+    protected static double betaStar;
 
-    public KEpsilonModel(
+    public KOmegaModel(
             VolScalarField velocity,
             VolScalarField dynamicViscosity,
             VolScalarField density,
@@ -47,16 +48,16 @@ public class KEpsilonModel extends Turbulence {
     ) {
         super(velocity, dynamicViscosity, density, mesh, iOobject);
         k = new VolScalarField("K", mesh, iOobject);
-        epsilon = new VolScalarField("Epsilon", mesh, iOobject);
+        omega = new VolScalarField("Omega", mesh, iOobject);
         S = new VolScalarField("S", mesh, iOobject);
         sigmak = iOobject.
                 getJsonObject().
                 getJSONObject("turbulence").
                 getDoubleValue("sigmak");
-        sigmae = iOobject.
+        sigmaOmega = iOobject.
                 getJsonObject().
                 getJSONObject("turbulence").
-                getDoubleValue("sigmae");
+                getDoubleValue("sigmaOmega");
         Cu = iOobject.
                 getJsonObject().
                 getJSONObject("turbulence").
@@ -67,19 +68,23 @@ public class KEpsilonModel extends Turbulence {
                 getJsonObject().
                 getJSONObject("turbulence").
                 getDoubleValue("CTRANS");
-        Ce1 = iOobject.
+        alpha = iOobject.
                 getJsonObject().
                 getJSONObject("turbulence").
-                getDoubleValue("Ce1");
-        Ce2 = iOobject.
+                getDoubleValue("alpha");
+        beta = iOobject.
                 getJsonObject().
                 getJSONObject("turbulence").
-                getDoubleValue("Ce2");
+                getDoubleValue("beta");
+        betaStar = iOobject.
+                getJsonObject().
+                getJSONObject("turbulence").
+                getDoubleValue("betaStar");
 
         kEquation = new KEquation(
                 mesh,
                 k,
-                epsilon,
+                omega,
                 this.velocity,
                 this.dynamicViscosity,
                 mut,
@@ -87,10 +92,10 @@ public class KEpsilonModel extends Turbulence {
                 iOobject,
                 S);
 
-        epsilonEquation = new EpsilonEquation(
+        omegaEquation = new OmegaEquation(
                 mesh,
                 k,
-                epsilon,
+                omega,
                 this.velocity,
                 dynamicViscosity,
                 mut,
@@ -104,8 +109,8 @@ public class KEpsilonModel extends Turbulence {
         this.calculateS(mesh, velocity, S);
         kEquation.discrete();
         kEquation.solve();
-        epsilonEquation.discrete();
-        epsilonEquation.solve();
+        omegaEquation.discrete();
+        omegaEquation.solve();
     }
 
     /**
@@ -128,15 +133,16 @@ public class KEpsilonModel extends Turbulence {
             for (int X = 1; X <= mesh.getNX(); ++X) {
                 IJ = mesh.getCellIndex(X, Y);
                 k.getFI()[IJ] = setK(velocity.getFI()[IJ]);
-                epsilon.getFI()[IJ] = setEpsilon(k.getFI()[IJ], diameter);
+                omega.getFI()[IJ] = setOmega(k.getFI()[IJ], diameter);
                 mut.getFI()[IJ]
                         = cacMut(
                                 density.getFI()[IJ],
                                 k.getFI()[IJ],
-                                epsilon.getFI()[IJ]
+                                omega.getFI()[IJ]
                         );
             }
         }
+
     }
 
     @Override
@@ -149,14 +155,14 @@ public class KEpsilonModel extends Turbulence {
                         = cacMut(
                                 density.getFI()[IJ],
                                 k.getFI()[IJ],
-                                epsilon.getFI()[IJ]
+                                omega.getFI()[IJ]
                         );
             }
         }
     }
 
-    public double cacMut(double rho, double K, double epsilon) {
-        return Cu * rho * K * K / (epsilon + 1e-30);
+    public double cacMut(double rho, double K, double omega) {
+        return rho * K / (omega + 1e-30);
     }
 
     private double setK(double velocity) {
@@ -169,9 +175,10 @@ public class KEpsilonModel extends Turbulence {
      * @param diameter
      * @return
      */
-    public double setEpsilon(double k, double diameter) {
+    public double setOmega(double k, double diameter) {
         return pow(0.09, 0.75) * pow(k, 3.0 / 2.0)
-                / turbulenceLengthScale(diameter);
+                / turbulenceLengthScale(diameter)
+                / k;
     }
 
     @Override
@@ -179,7 +186,7 @@ public class KEpsilonModel extends Turbulence {
             List<SolverPerformance> solverPerformances
     ) {
         solverPerformances.add(kEquation.getSolverPerformance());
-        solverPerformances.add(epsilonEquation.getSolverPerformance());
+        solverPerformances.add(omegaEquation.getSolverPerformance());
     }
 
 }
