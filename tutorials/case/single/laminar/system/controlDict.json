@@ -35,7 +35,7 @@
         }
     },
     "turbulence": "laminar",
-    "Uequation": {
+    "U Equation": {
         "Solve Name": "SIPSOL",
         "Relax Factor": 1.0,
         "Convergence Criterion": 1e-6,

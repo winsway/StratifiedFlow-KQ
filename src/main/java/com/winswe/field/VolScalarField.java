@@ -3,6 +3,7 @@ package com.winswe.field;
 import com.alibaba.fastjson.JSONObject;
 import com.winswe.boundary.NoSlip;
 import com.winswe.boundary.RobinBC;
+import com.winswe.boundary.ZeroGradient;
 import com.winswe.io.IOobject;
 import com.winswe.mesh.Structed2D;
 import java.util.List;
@@ -80,18 +81,22 @@ public class VolScalarField {
         String type = jsonObjectBoundary.getString("type");
 
         System.out.println(this.name + " boundary condition type = " + type);
-
+        RobinBC bc = null;
         if ("noSlip".equals(type)) {
-            RobinBC noSlip = new NoSlip();
+            bc = new NoSlip();
 
+        } else if ("ZeroGradient".equals(type)) {
+            bc = new ZeroGradient();
+
+        }
+        if (bc != null) {
             try {
-                this.loopAllBoundary(1, noSlip);
+                this.loopAllBoundary(1, bc);
 
             } catch (CloneNotSupportedException ex) {
                 Logger.getLogger(VolScalarField.class
                         .getName()).log(Level.SEVERE, null, ex);
             }
-
         }
 
     }

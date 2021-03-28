@@ -1,5 +1,6 @@
 package com.winswe.solver;
 
+import com.winswe.turbulence.Turbulence;
 import com.winswe.field.VolScalarField;
 import com.winswe.io.IOobject;
 import com.winswe.matrix.solve.SimpleControl;
@@ -14,32 +15,42 @@ import com.winswe.mesh.factory.BipolarCoordianteMesh;
 public class TurbulenceSolver {
 
     /**
-     * Finite volume mesh
+     * Finite Volume Mesh
      */
     private Structed2D mesh;
 
     /**
-     * velocity
+     * Velocity
      */
     private VolScalarField U;
 
     /**
-     * effective viscosity
+     * Effective Viscosity
      */
     private VolScalarField mueff;
 
     /**
-     * density
+     * Dynamic Viscosity
+     */
+    private VolScalarField mum;
+
+    /**
+     * Density
      */
     private VolScalarField density;
 
     /**
-     * configure file
+     * Configure File
      */
     private final IOobject iOobject;
 
     /**
-     * solve control
+     * Turbulence Model
+     */
+    Turbulence turbulence;
+
+    /**
+     * Solve Control
      */
     SimpleControl simple;
 
@@ -72,10 +83,20 @@ public class TurbulenceSolver {
     public void createField() {
         U = new VolScalarField("Velocity", mesh, iOobject);
         U.setBoundaryCondition();
-        mueff = new VolScalarField("Viscosity", mesh, iOobject);
+        mueff = new VolScalarField("Effective Viscosity", mesh, iOobject);
         mueff.setBoundaryCondition();
+        mum = new VolScalarField("Dynamic Viscosity", mesh, iOobject);
+        mum.setBoundaryCondition();
         density = new VolScalarField("Density", mesh, iOobject);
         density.setBoundaryCondition();
+
+        turbulence
+                = Turbulence.factory(
+                        U, mum, density,
+                        mesh,
+                        iOobject
+                );
+
     }
 
     public void outPutFields() {
@@ -89,9 +110,26 @@ public class TurbulenceSolver {
     public void solve() {
         UEquation UEqu = new UEquation(2.2301, mesh, U, mueff, density, iOobject);
         simple.getResult().add(UEqu.getSolverPerformance());
+        turbulence.setSolverPerformance(simple.getResult());
+//        do {
+//            UEqu.discrete();
+//            UEqu.solve();
+//        } while (simple.loop());
+//        turbulence.setTurPar();
+//        iOobject.outPutField();
+
         do {
             UEqu.discrete();
             UEqu.solve();
+            if (simple.getCount() == 0) {
+                turbulence.setTurPar();
+            }
+//            iOobject.outPutField();
+            turbulence.solve();
+            this.modifiedViscosity();
+//            if (simple.getCount() > 0) {
+//                iOobject.outPutField();
+//            }
         } while (simple.loop());
 
         double temp = 0;
@@ -100,6 +138,19 @@ public class TurbulenceSolver {
         }
         System.out.println("max     velocity = " + temp + " m/s");
         System.out.println("average velocity = " + temp / 2.0 + " m/s");
+    }
+
+    public void modifiedViscosity() {
+        turbulence.updateMut();
+        int IJ;
+        for (int Y = 1; Y <= mesh.getNY(); ++Y) {
+            for (int X = 1; X <= mesh.getNX(); ++X) {
+                IJ = mesh.getCellIndex(X, Y);
+                mueff.getFI()[IJ]
+                        = mum.getFI()[IJ]
+                        + turbulence.getEddyViscosity().getFI()[IJ];
+            }
+        }
     }
 
 }

@@ -5,7 +5,18 @@
  */
 package com.winswe.turbulence.kepsilon;
 
+import com.alibaba.fastjson.JSONObject;
+import static com.cup.util.Flux.faceValue;
+import com.winswe.boundary.BoundaryCondition;
+import com.winswe.field.VolScalarField;
+import com.winswe.io.IOobject;
+import com.winswe.matrix.Matrix;
+import com.winswe.matrix.solve.MatrixSolver;
+import com.winswe.matrix.solve.SolverPerformance;
 import com.winswe.mesh.Structed2D;
+import com.winswe.turbulence.Turbulence;
+import com.winswe.util.Label;
+import static java.lang.Math.max;
 
 /**
  *
@@ -14,28 +25,260 @@ import com.winswe.mesh.Structed2D;
  */
 public class EpsilonEquation {
 
-    /**
-     * von Karman Constant
-     */
-    final public double CAPPA = 0.41;
+    private final Structed2D mesh;
+    private final VolScalarField k;
+    private final VolScalarField epsilon;
+    private final VolScalarField velocity;
+    private final VolScalarField mu;
+    private final VolScalarField mut;
+    private final VolScalarField rho;
+    private final IOobject ioObject;
+    private final double URF;
+    private final MatrixSolver matrixSolver;
+    private final SolverPerformance solverPerformance;
+    private final JSONObject jSONObject;
+    private final Matrix coe;
+    private final VolScalarField S;
 
-    /**
-     *
-     */
-    final public double ELOG = 8.342;
-
-    /**
-     *
-     * @param mesh mesh
-     * @param velocity velocity m/s
-     * @param S strain rate tensor
-     */
-    public void calculateS(
+    public EpsilonEquation(
             Structed2D mesh,
-            double[] velocity,
-            double[] S
+            VolScalarField k,
+            VolScalarField epsilon,
+            VolScalarField U,
+            VolScalarField mu,
+            VolScalarField mut,
+            VolScalarField density,
+            IOobject ioObject,
+            VolScalarField S
     ) {
+        this.mesh = mesh;
+        this.k = k;
+        this.epsilon = epsilon;
+        this.velocity = U;
+        this.mu = mu;
+        this.mut = mut;
+        this.rho = density;
+        this.ioObject = ioObject;
+        this.coe = new Matrix(mesh.getNX(), mesh.getNY());
+        this.S = S;
+        //        
+        jSONObject = ioObject.
+                getJsonObject().
+                getJSONObject("Epsilon Equation");
+        this.URF = jSONObject.getDoubleValue("Relax Factor");
 
+        solverPerformance = new SolverPerformance(
+                "Epsilon Equation",
+                jSONObject.getIntValue("Sub Loop Number"),
+                jSONObject.getDoubleValue("Convergence Criterion")
+        );
+
+        matrixSolver = MatrixSolver.factory(
+                jSONObject.getString("Solve Name"),
+                coe,
+                epsilon.getFI(),
+                mesh,
+                solverPerformance);
+
+    }
+
+    /**
+     * discrete equation
+     */
+    public void discrete() {
+        double URFFI = 1. / URF;
+        double Fe, Fw, Fn, Fs;
+        double De, Dw, Dn, Ds;
+        double Spad, Scad, Sp, Sc;
+        double muw, mue, mus, mun, mup;
+        double gamw, game, gams, gamn;
+
+        Label flag = new Label(mesh.getNX(), mesh.getNY());
+
+        int IJW, IJE, IJS, IJN, IJ;
+
+        coe.intialMatrix();
+
+        for (int Y = 1; Y <= mesh.getNY(); ++Y) {
+            for (int X = 1; X <= mesh.getNX(); ++X) {
+
+                flag.setFlag(X, Y);
+                double volume = mesh.getVolume(X, Y);
+
+                //INDEX 
+                IJ = mesh.getCellIndex(X, Y);
+                IJW = mesh.getCellIndex(X - 1, Y);
+                IJE = mesh.getCellIndex(X + 1, Y);
+                IJS = mesh.getCellIndex(X, Y - 1);
+                IJN = mesh.getCellIndex(X, Y + 1);
+
+                Fw = 0;
+                Fe = 0;
+                Fs = 0;
+                Fn = 0;
+
+                mup = (mu.getFI()[IJ] + mut.getFI()[IJ] / KEpsilonModel.sigmae);
+                muw = (mu.getFI()[IJW] + mut.getFI()[IJW] / KEpsilonModel.sigmae);
+                mue = (mu.getFI()[IJE] + mut.getFI()[IJE] / KEpsilonModel.sigmae);
+                mus = (mu.getFI()[IJS] + mut.getFI()[IJS] / KEpsilonModel.sigmae);
+                mun = (mu.getFI()[IJN] + mut.getFI()[IJN] / KEpsilonModel.sigmae);
+
+                gamw
+                        = faceValue(
+                                muw, mup - muw,
+                                mesh.getPointX1()[X - 1], mesh.getLineX1()[X - 1],
+                                mesh.getPointX1()[X]
+                        );
+                game
+                        = faceValue(
+                                mup, mue - mup,
+                                mesh.getPointX1()[X], mesh.getLineX1()[X],
+                                mesh.getPointX1()[X + 1]
+                        );
+                gams
+                        = faceValue(
+                                mus, mup - mus,
+                                mesh.getPointX2()[Y - 1], mesh.getLineX2()[Y - 1],
+                                mesh.getPointX2()[Y]
+                        );
+                gamn
+                        = faceValue(
+                                mup, mun - mup,
+                                mesh.getPointX2()[Y], mesh.getLineX2()[Y],
+                                mesh.getPointX2()[Y + 1]
+                        );
+
+                Dw = -gamw * mesh.getDYV()[Y] / mesh.getDXP()[X - 1];
+                De = -game * mesh.getDYV()[Y] / mesh.getDXP()[X];
+                Ds = -gams * mesh.getDXU()[X] / mesh.getDYP()[Y - 1];
+                Dn = -gamn * mesh.getDXU()[X] / mesh.getDYP()[Y];
+
+                coe.getAW()[IJ] = (1 - flag.getWest()) * (Math.max(Fw, 0.0) + Dw);
+                coe.getAE()[IJ] = (1 - flag.getEast()) * (Math.max(-Fe, 0.0) + De);
+                coe.getAS()[IJ] = (1 - flag.getSouth()) * (Math.max(Fs, 0.0) + Ds);
+                coe.getAN()[IJ] = (1 - flag.getNorth()) * (Math.max(-Fn, 0.0) + Dn);
+
+                //setting add source.
+                Sp
+                        = -KEpsilonModel.Ce2 * rho.getFI()[IJ]
+                        * epsilon.getFI()[IJ] / k.getFI()[IJ];
+
+                Spad
+                        = BoundaryCondition.spadWest(
+                                Dw, Fw, mesh.getDXP()[X - 1], volume,
+                                epsilon.getBoundaryConditionParameter()[IJW])
+                        + BoundaryCondition.spadEast(
+                                De, Fe, mesh.getDXP()[X], volume,
+                                epsilon.getBoundaryConditionParameter()[IJE])
+                        + BoundaryCondition.spadSouth(
+                                Ds, Fs, mesh.getDYP()[Y - 1], volume,
+                                epsilon.getBoundaryConditionParameter()[IJS])
+                        + BoundaryCondition.spadNorth(
+                                Dn, Fn, mesh.getDYP()[Y], volume,
+                                epsilon.getBoundaryConditionParameter()[IJN]);
+
+                //get the coefficient of ap
+                coe.getAP()[IJ]
+                        = -(coe.getAW()[IJ] + coe.getAE()[IJ]
+                        + coe.getAS()[IJ] + coe.getAN()[IJ]
+                        + (Fe - Fw) + (Fn - Fs) - Spad * volume)
+                        - Sp * volume;
+
+                Sc
+                        = KEpsilonModel.Ce1 * (mut.getFI()[IJ] * S.getFI()[IJ])
+                        * epsilon.getFI()[IJ] / k.getFI()[IJ];
+
+                Scad
+                        = BoundaryCondition.scadWest(
+                                Dw, Fw, mesh.getDXP()[X - 1], volume,
+                                epsilon.getBoundaryConditionParameter()[IJW])
+                        + BoundaryCondition.scadEast(
+                                De, Fe, mesh.getDXP()[X], volume,
+                                epsilon.getBoundaryConditionParameter()[IJE])
+                        + BoundaryCondition.scadSouth(
+                                Ds, Fs, mesh.getDYP()[Y - 1], volume,
+                                epsilon.getBoundaryConditionParameter()[IJS])
+                        + BoundaryCondition.scadNorth(
+                                Dn, Fn, mesh.getDYP()[Y], volume,
+                                epsilon.getBoundaryConditionParameter()[IJN]);
+
+                coe.getS()[IJ] = (Sc + Scad) * volume;
+            }
+        }
+
+        double distance = 1E-30;
+        for (int Y = 1; Y <= mesh.getNY(); ++Y) {
+            for (int X = 1; X <= mesh.getNX(); ++X) {
+
+                flag.setFlag(X, Y);
+
+                //INDEX 
+                IJ = mesh.getCellIndex(X, Y);
+
+                if (flag.atBoundary()) {
+                    if (flag.getWest() == 1) {
+                        distance = Turbulence.distanceBetweenTwoPoints(
+                                mesh.X(mesh.getPointX1()[X], mesh.getPointX2()[Y]),
+                                mesh.Y(mesh.getPointX1()[X], mesh.getPointX2()[Y]),
+                                mesh.X(mesh.getPointX1()[X - 1], mesh.getPointX2()[Y]),
+                                mesh.Y(mesh.getPointX1()[X - 1], mesh.getPointX2()[Y]));
+
+                    }
+                    if (flag.getEast() == 1) {
+                        distance = Turbulence.distanceBetweenTwoPoints(
+                                mesh.X(mesh.getPointX1()[X], mesh.getPointX2()[Y]),
+                                mesh.Y(mesh.getPointX1()[X], mesh.getPointX2()[Y]),
+                                mesh.X(mesh.getPointX1()[X + 1], mesh.getPointX2()[Y]),
+                                mesh.Y(mesh.getPointX1()[X + 1], mesh.getPointX2()[Y]));
+
+                    }
+                    if (flag.getSouth() == 1) {
+                        distance = Turbulence.distanceBetweenTwoPoints(
+                                mesh.X(mesh.getPointX1()[X], mesh.getPointX2()[Y]),
+                                mesh.Y(mesh.getPointX1()[X], mesh.getPointX2()[Y]),
+                                mesh.X(mesh.getPointX1()[X], mesh.getPointX2()[Y - 1]),
+                                mesh.Y(mesh.getPointX1()[X], mesh.getPointX2()[Y - 1]));
+
+                    }
+                    if (flag.getNorth() == 1) {
+                        distance = Turbulence.distanceBetweenTwoPoints(
+                                mesh.X(mesh.getPointX1()[X], mesh.getPointX2()[Y]),
+                                mesh.Y(mesh.getPointX1()[X], mesh.getPointX2()[Y]),
+                                mesh.X(mesh.getPointX1()[X], mesh.getPointX2()[Y + 1]),
+                                mesh.Y(mesh.getPointX1()[X], mesh.getPointX2()[Y + 1]));
+
+                    }
+
+                    double value
+                            = KEpsilonModel.Cu75
+                            * Math.pow(max(0, k.getFI()[IJ]), 1.5)
+                            / (Turbulence.CAPPA * distance);
+                    coe.getAP()[IJ] = 1.0;
+                    coe.getAW()[IJ] = 0;//w
+                    coe.getAE()[IJ] = 0;//e
+                    coe.getAS()[IJ] = 0;//s
+                    coe.getAN()[IJ] = 0;//n
+                    coe.getS()[IJ] = value;
+                }
+
+                coe.getS()[IJ]
+                        = coe.getS()[IJ]
+                        + (URFFI - 1.0) * coe.getAP()[IJ]
+                        * epsilon.getFI()[IJ];
+                coe.getAP()[IJ] = coe.getAP()[IJ] * URFFI;
+            }
+        }
+    }
+
+    /**
+     * solve equation
+     */
+    public void solve() {
+        matrixSolver.solve();
+    }
+
+    public SolverPerformance getSolverPerformance() {
+        return solverPerformance;
     }
 
 }

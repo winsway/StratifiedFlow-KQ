@@ -155,6 +155,7 @@ public class BipolarCoordianteMesh
      * @param y y坐标
      * @return eta方向的度规系数
      */
+    @Override
     public double alpha(double x, double y) {
         double c = cosh(x) * cos(y) - 1.0;
         double s = sinh(x) * sin(y);

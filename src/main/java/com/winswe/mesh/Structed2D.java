@@ -61,7 +61,7 @@ public interface Structed2D {
     public double Y(double x1, double x2);
 
     /**
-     * 
+     *
      * @return
      */
     public double[] getLineX1();
@@ -99,5 +99,7 @@ public interface Structed2D {
     public double[] getDXU();
 
     public double[] getDYP();
+
+    public double alpha(double x1, double x2);
 
 }

@@ -63,11 +63,11 @@ public class UEquation {
         //        
         jSONObject = ioObject.
                 getJsonObject().
-                getJSONObject("Uequation");
+                getJSONObject("U Equation");
         this.URF = jSONObject.getDoubleValue("Relax Factor");
 
         solverPerformance = new SolverPerformance(
-                "Uequation",
+                "U Equation",
                 jSONObject.getIntValue("Sub Loop Number"),
                 jSONObject.getDoubleValue("Convergence Criterion")
         );
@@ -154,13 +154,13 @@ public class UEquation {
                         = BoundaryCondition.spadWest(
                                 Dw, Fw, mesh.getDXP()[X - 1], volume,
                                 U.getBoundaryConditionParameter()[IJW])
-                        + BoundaryCondition.SpadEast(
+                        + BoundaryCondition.spadEast(
                                 De, Fe, mesh.getDXP()[X], volume,
                                 U.getBoundaryConditionParameter()[IJE])
                         + BoundaryCondition.spadSouth(
                                 Ds, Fs, mesh.getDYP()[Y - 1], volume,
                                 U.getBoundaryConditionParameter()[IJS])
-                        + BoundaryCondition.spadSouth(
+                        + BoundaryCondition.spadNorth(
                                 Dn, Fn, mesh.getDYP()[Y], volume,
                                 U.getBoundaryConditionParameter()[IJN]);
 
@@ -168,8 +168,8 @@ public class UEquation {
                 coeW.getAP()[IJ]
                         = -(coeW.getAW()[IJ] + coeW.getAE()[IJ]
                         + coeW.getAS()[IJ] + coeW.getAN()[IJ]
-                        + (Fe - Fw) + (Fn - Fs)
-                        - (Sp + Spad) * volume);
+                        + (Fe - Fw) + (Fn - Fs) - Spad * volume)
+                        - Sp * volume;
 
                 Sc = dpdz;
 

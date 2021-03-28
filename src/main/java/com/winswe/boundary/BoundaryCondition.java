@@ -77,7 +77,7 @@ public interface BoundaryCondition {
      * @param bc boundary condition parameter
      * @return boundary value
      */
-    static public double SpadEast(
+    static public double spadEast(
             double De,
             double Fe,
             double dxe,
@@ -104,7 +104,7 @@ public interface BoundaryCondition {
      * @param bc boundary condition parameter
      * @return boundary value
      */
-    static public double SpadNorth(
+    static public double spadNorth(
             double Dn,
             double Fn,
             double dxn,

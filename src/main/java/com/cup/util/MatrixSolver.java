@@ -72,4 +72,37 @@ public class MatrixSolver {
         return resLog;
     }
 
+    static public ResidualLog gaussSeidel(double[][][] phi, CoeffMatrix coe, SystemControl sys, int num) {
+        ResidualLog resLog = new ResidualLog();
+        double URF = 1.0;
+        double URFFI = 1. / URF;
+        double temp;
+        do {
+            resLog.intialErro();
+            for (int z = 1; z < phi[0][0].length - 1; ++z) {
+                for (int y = 1; y < phi[0].length - 1; ++y) {
+                    for (int x = 1; x < phi.length - 1; ++x) {
+                        temp = (coe.getAw(x, y, z) * phi[x - 1][y][z]
+                                + coe.getAe(x, y, z) * phi[x + 1][y][z]
+                                + coe.getAs(x, y, z) * phi[x][y - 1][z]
+                                + coe.getAn(x, y, z) * phi[x][y + 1][z]
+                                + coe.getAb(x, y, z) * phi[x][y][z - 1]
+                                + coe.getAt(x, y, z) * phi[x][y][z + 1]
+                                + coe.getB(x, y, z)
+                                + (URFFI - 1.0) * coe.getAp(x, y, z) * phi[x][y][z])
+                                / (URFFI * coe.getAp(x, y, z));
+                        resLog.residualDeal(phi[x][y][z], temp);
+                        phi[x][y][z] = temp;
+                    }
+                }
+            }
+            resLog.No_Iteration++;
+            resLog.getResidual();
+//            System.out.println("resLog.getResidual();=" + resLog.getMaxResidual());
+        } while (resLog.getMaxResidual() > sys.fvSolution.getRtol()
+                && resLog.No_Iteration < num);
+
+        return resLog;
+    }
+
 }

@@ -55,4 +55,14 @@ public class Label {
         return north;
     }
 
+    /**
+     *
+     * @return true:at boundary.
+     */
+    public boolean atBoundary() {
+        return (getWest() == 1)
+                || (getEast() == 1)
+                || (getSouth() == 1)
+                || (getNorth() == 1);
+    }
 }
