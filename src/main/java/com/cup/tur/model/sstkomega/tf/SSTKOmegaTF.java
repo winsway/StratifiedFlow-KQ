@@ -448,7 +448,13 @@ public class SSTKOmegaTF {
      * @param F2
      * @return 湍流粘度
      */
-    public double cacMut(double rho, double K, double omega, double SMOD, double F2) {
+    public double cacMut(
+            double rho,
+            double K,
+            double omega,
+            double SMOD,
+            double F2
+    ) {
         double A, B;
         A = a1 * rho * K;
         B = Math.max(a1 * omega, SMOD * F2);
@@ -902,6 +908,7 @@ public class SSTKOmegaTF {
                                     mesh.realX(mesh.gettPx()[X], mesh.gettPy()[Y + 1]),
                                     mesh.realY(mesh.gettPx()[X], mesh.gettPy()[Y + 1]));
                         }
+
                         double WLOG = sqrt(max(0, K[X][Y][Z])) / (CMU25 * CAPPA * DN);
                         double WVIS = 6.0 * mu[X][Y][Z] / (rho[X][Y][Z] * beta1 * DN * DN);
 

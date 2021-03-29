@@ -1,0 +1,36 @@
+Gwater = 7.421244e-02	 Goil = 7.421244e-02	
+Fx1 xold =3.030000e+00	 yold =5.000000e-01	
+Gwater = 9.733083e-03	 Goil = 9.733068e-03	
+Fy1 xold =3.000000e+00	 yold =5.050000e-01	
+Gwater = 9.814099e-03	 Goil = 9.512530e-03	
+F1 xold =3.000000e+00	 yold =5.000000e-01	
+Gwater = 9.663361e-03	 Goil = 9.663346e-03	
+
+Fx1 xold =3.108185e+01	 yold =4.999980e-01	
+Gwater = 4.578817e-02	 Goil = 4.578868e-02	
+Fy1 xold =3.077411e+01	 yold =5.049980e-01	
+Gwater = 4.615786e-02	 Goil = 4.484881e-02	
+F1 xold =3.077411e+01	 yold =4.999980e-01	
+Gwater = 4.550263e-02	 Goil = 4.550314e-02	
+
+Fx1 xold =6.233289e+01	 yold =5.000012e-01	
+Gwater = 7.036953e-02	 Goil = 7.036906e-02	
+Fy1 xold =6.171573e+01	 yold =5.050012e-01	
+Gwater = 7.093034e-02	 Goil = 6.896209e-02	
+F1 xold =6.171573e+01	 yold =5.000012e-01	
+Gwater = 6.994716e-02	 Goil = 6.994669e-02	
+
+Fx1 xold =6.862795e+01	 yold =4.999999e-01	
+Gwater = 7.457344e-02	 Goil = 7.457347e-02	
+Fy1 xold =6.794846e+01	 yold =5.049999e-01	
+Gwater = 7.516738e-02	 Goil = 7.308768e-02	
+F1 xold =6.794846e+01	 yold =4.999999e-01	
+Gwater = 7.412773e-02	 Goil = 7.412776e-02	
+
+Fx1 xold =6.875835e+01	 yold =5.000000e-01	
+Gwater = 7.465876e-02	 Goil = 7.465876e-02	
+Fy1 xold =6.807757e+01	 yold =5.050000e-01	
+Gwater = 7.525327e-02	 Goil = 7.317123e-02	
+F1 xold =6.807757e+01	 yold =5.000000e-01	
+Gwater = 7.421259e-02	 Goil = 7.421259e-02	
+

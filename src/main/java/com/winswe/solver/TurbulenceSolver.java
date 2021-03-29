@@ -127,9 +127,8 @@ public class TurbulenceSolver {
 //            iOobject.outPutField();
             turbulence.solve();
             this.modifiedViscosity();
-//            if (simple.getCount() > 0) {
-//                iOobject.outPutField();
-//            }
+
+//            iOobject.outPutField();
         } while (simple.loop());
 
         double temp = 0;
@@ -148,7 +147,7 @@ public class TurbulenceSolver {
                 IJ = mesh.getCellIndex(X, Y);
                 mueff.getFI()[IJ]
                         = (mum.getFI()[IJ]
-                        + 0.25 * turbulence.getEddyViscosity().getFI()[IJ]);
+                        + 0.20 * turbulence.getEddyViscosity().getFI()[IJ]);
             }
         }
     }

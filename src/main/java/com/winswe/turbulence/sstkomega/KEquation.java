@@ -39,6 +39,8 @@ public class KEquation {
     private final JSONObject jSONObject;
     private final Matrix coe;
     private final VolScalarField S;
+    private final VolScalarField F1SST;
+    private final VolScalarField GEN;
 
     public KEquation(
             Structed2D mesh,
@@ -49,7 +51,9 @@ public class KEquation {
             VolScalarField mut,
             VolScalarField density,
             IOobject ioObject,
-            VolScalarField S
+            VolScalarField S,
+            VolScalarField F1SST,
+            VolScalarField GEN
     ) {
         this.mesh = mesh;
         this.k = k;
@@ -61,6 +65,8 @@ public class KEquation {
         this.ioObject = ioObject;
         this.coe = new Matrix(mesh.getNX(), mesh.getNY());
         this.S = S;
+        this.F1SST = F1SST;
+        this.GEN = GEN;
         //        
         jSONObject = ioObject.
                 getJsonObject().
@@ -93,7 +99,7 @@ public class KEquation {
         double muw, mue, mus, mun, mup;
         double gamw, game, gams, gamn;
 
-        double productTerm = 0;
+        double sigma = 0;
 
         Label flag = new Label(mesh.getNX(), mesh.getNY());
 
@@ -119,11 +125,17 @@ public class KEquation {
                 Fs = 0;
                 Fn = 0;
 
-                mup = (mu.getFI()[IJ] + mut.getFI()[IJ] / KOmegaModel.sigmak);
-                muw = (mu.getFI()[IJW] + mut.getFI()[IJW] / KOmegaModel.sigmak);
-                mue = (mu.getFI()[IJE] + mut.getFI()[IJE] / KOmegaModel.sigmak);
-                mus = (mu.getFI()[IJS] + mut.getFI()[IJS] / KOmegaModel.sigmak);
-                mun = (mu.getFI()[IJN] + mut.getFI()[IJN] / KOmegaModel.sigmak);
+                sigma = SSTKOmegaModel.getPhi(
+                        SSTKOmegaModel.sigmak1,
+                        SSTKOmegaModel.sigmak2,
+                        F1SST.getFI()[IJ]
+                );
+
+                mup = (mu.getFI()[IJ] + mut.getFI()[IJ] * sigma);
+                muw = (mu.getFI()[IJW] + mut.getFI()[IJW] * sigma);
+                mue = (mu.getFI()[IJE] + mut.getFI()[IJE] * sigma);
+                mus = (mu.getFI()[IJS] + mut.getFI()[IJS] * sigma);
+                mun = (mu.getFI()[IJN] + mut.getFI()[IJN] * sigma);
 
                 gamw
                         = faceValue(
@@ -159,8 +171,9 @@ public class KEquation {
                 coe.getAE()[IJ] = (1 - flag.getEast()) * (Math.max(-Fe, 0.0) + De);
                 coe.getAS()[IJ] = (1 - flag.getSouth()) * (Math.max(Fs, 0.0) + Ds);
                 coe.getAN()[IJ] = (1 - flag.getNorth()) * (Math.max(-Fn, 0.0) + Dn);
+
                 //setting add source.
-                Sp = -KOmegaModel.betaStar * rho.getFI()[IJ] * omega.getFI()[IJ];
+                Sp = -SSTKOmegaModel.betaStar * rho.getFI()[IJ] * omega.getFI()[IJ];
                 Spad
                         = BoundaryCondition.spadWest(
                                 Dw, Fw, mesh.getDXP()[X - 1], volume,
@@ -179,7 +192,7 @@ public class KEquation {
                 coe.getAP()[IJ]
                         = -(coe.getAW()[IJ] + coe.getAE()[IJ]
                         + coe.getAS()[IJ] + coe.getAN()[IJ]
-                        + (Fe - Fw) + (Fn - Fs) + Spad * volume)
+                        + (Fe - Fw) + (Fn - Fs) - Spad * volume)
                         - Sp * volume;
 
                 //<editor-fold>
@@ -187,7 +200,7 @@ public class KEquation {
                     double viss = mu.getFI()[IJ];
                     double yPlus, distance = 0;
                     double tau = 0;
-                    double CK = KOmegaModel.getCK(k.getFI()[IJ]);
+                    double CK = SSTKOmegaModel.getCK(k.getFI()[IJ]);
                     double viscWall, visW;
                     if (flag.getWest() == 1) {
                         distance = Turbulence.distanceBetweenTwoPoints(
@@ -198,7 +211,7 @@ public class KEquation {
                         yPlus = Turbulence.yPlusSubLay(rho.getFI()[IJ], mu.getFI()[IJ], CK, distance);
                         viscWall = Turbulence.getViscosityWall(yPlus, mu.getFI()[IJ]);
                         visW = max(mu.getFI()[IJ], viscWall);
-                        if (yPlus >= KOmegaModel.CTRANS) {
+                        if (yPlus >= SSTKOmegaModel.CTRANS) {
                             viss = visW;
                         }
                         tau
@@ -217,7 +230,7 @@ public class KEquation {
                         yPlus = Turbulence.yPlusSubLay(rho.getFI()[IJ], mu.getFI()[IJ], CK, distance);
                         viscWall = Turbulence.getViscosityWall(yPlus, mu.getFI()[IJ]);
                         visW = max(mu.getFI()[IJ], viscWall);
-                        if (yPlus >= KOmegaModel.CTRANS) {
+                        if (yPlus >= SSTKOmegaModel.CTRANS) {
                             viss = visW;
                         }
                         tau
@@ -236,7 +249,7 @@ public class KEquation {
                         yPlus = Turbulence.yPlusSubLay(rho.getFI()[IJ], mu.getFI()[IJ], CK, distance);
                         viscWall = Turbulence.getViscosityWall(yPlus, mu.getFI()[IJ]);
                         visW = max(mu.getFI()[IJ], viscWall);
-                        if (yPlus >= KOmegaModel.CTRANS) {
+                        if (yPlus >= SSTKOmegaModel.CTRANS) {
                             viss = visW;
                         }
                         tau
@@ -255,7 +268,7 @@ public class KEquation {
                         yPlus = Turbulence.yPlusSubLay(rho.getFI()[IJ], mu.getFI()[IJ], CK, distance);
                         viscWall = Turbulence.getViscosityWall(yPlus, mu.getFI()[IJ]);
                         visW = max(mu.getFI()[IJ], viscWall);
-                        if (yPlus >= KOmegaModel.CTRANS) {
+                        if (yPlus >= SSTKOmegaModel.CTRANS) {
                             viss = visW;
                         }
                         tau = Turbulence.getTauWall(
@@ -264,13 +277,20 @@ public class KEquation {
                                 velocity.getFI()[IJN],
                                 distance);
                     }
-                    productTerm = Turbulence.getProduceTerm(tau, k.getFI()[IJ], distance);
+                    GEN.getFI()[IJ] = Turbulence.getProduceTerm(tau, k.getFI()[IJ], distance);
                 } else {
-                    productTerm = (mut.getFI()[IJ] * S.getFI()[IJ]);
+                    GEN.getFI()[IJ] = Math.min(
+                            mut.getFI()[IJ] * S.getFI()[IJ],
+                            10.0
+                            * SSTKOmegaModel.betaStar
+                            * rho.getFI()[IJ]
+                            * omega.getFI()[IJ]
+                            * k.getFI()[IJ]
+                    );
                 }
                 //</editor-fold>
 
-                Sc = productTerm;
+                Sc = GEN.getFI()[IJ];
 
                 Scad
                         = BoundaryCondition.scadWest(

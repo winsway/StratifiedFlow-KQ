@@ -8,6 +8,7 @@ import com.winswe.matrix.solve.SolverPerformance;
 import com.winswe.mesh.Structed2D;
 import com.winswe.turbulence.kepsilon.KEpsilonModel;
 import com.winswe.turbulence.komega.KOmegaModel;
+import com.winswe.turbulence.sstkomega.SSTKOmegaModel;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
@@ -110,10 +111,11 @@ public abstract class Turbulence {
         } else if ("KOmega".equals(name)) {
             return new KOmegaModel(velocity, dynamicViscosity, density, mesh, iOobject);
         } else if ("SSTKOmega".equals(name)) {
-            return null;
+            return new SSTKOmegaModel(velocity, dynamicViscosity, density, mesh, iOobject);
         } else {
             throw new ArithmeticException("without the solver name");
         }
+        
     }
 
     /**

@@ -179,7 +179,7 @@ public class KEquation {
                 coe.getAP()[IJ]
                         = -(coe.getAW()[IJ] + coe.getAE()[IJ]
                         + coe.getAS()[IJ] + coe.getAN()[IJ]
-                        + (Fe - Fw) + (Fn - Fs) + Spad * volume)
+                        + (Fe - Fw) + (Fn - Fs) - Spad * volume)
                         - Sp * volume;
 
                 //<editor-fold>

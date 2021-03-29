@@ -17,6 +17,7 @@ import com.winswe.mesh.Structed2D;
 import com.winswe.turbulence.Turbulence;
 import com.winswe.util.Label;
 import static java.lang.Math.max;
+import static java.lang.Math.sqrt;
 
 /**
  *
@@ -39,6 +40,9 @@ public class OmegaEquation {
     private final JSONObject jSONObject;
     private final Matrix coe;
     private final VolScalarField S;
+    private final VolScalarField F1SST;
+    private final VolScalarField DOMEGA;
+    private final VolScalarField GEN;
 
     public OmegaEquation(
             Structed2D mesh,
@@ -49,7 +53,10 @@ public class OmegaEquation {
             VolScalarField mut,
             VolScalarField density,
             IOobject ioObject,
-            VolScalarField S
+            VolScalarField S,
+            VolScalarField F1SST,
+            VolScalarField DOMEGA,
+            VolScalarField GEN
     ) {
         this.mesh = mesh;
         this.k = k;
@@ -61,6 +68,9 @@ public class OmegaEquation {
         this.ioObject = ioObject;
         this.coe = new Matrix(mesh.getNX(), mesh.getNY());
         this.S = S;
+        this.F1SST = F1SST;
+        this.DOMEGA = DOMEGA;
+        this.GEN = GEN;
         //        
         jSONObject = ioObject.
                 getJsonObject().
@@ -93,6 +103,8 @@ public class OmegaEquation {
         double muw, mue, mus, mun, mup;
         double gamw, game, gams, gamn;
 
+        double sigma, beta, alpha;
+
         Label flag = new Label(mesh.getNX(), mesh.getNY());
 
         int IJW, IJE, IJS, IJN, IJ;
@@ -117,11 +129,17 @@ public class OmegaEquation {
                 Fs = 0;
                 Fn = 0;
 
-                mup = (mu.getFI()[IJ] + mut.getFI()[IJ] / KOmegaModel.sigmaOmega);
-                muw = (mu.getFI()[IJW] + mut.getFI()[IJW] / KOmegaModel.sigmaOmega);
-                mue = (mu.getFI()[IJE] + mut.getFI()[IJE] / KOmegaModel.sigmaOmega);
-                mus = (mu.getFI()[IJS] + mut.getFI()[IJS] / KOmegaModel.sigmaOmega);
-                mun = (mu.getFI()[IJN] + mut.getFI()[IJN] / KOmegaModel.sigmaOmega);
+                sigma = SSTKOmegaModel.getPhi(
+                        SSTKOmegaModel.sigmaOmega1,
+                        SSTKOmegaModel.sigmaOmega2,
+                        F1SST.getFI()[IJ]
+                );
+
+                mup = (mu.getFI()[IJ] + mut.getFI()[IJ] * sigma);
+                muw = (mu.getFI()[IJW] + mut.getFI()[IJW] * sigma);
+                mue = (mu.getFI()[IJE] + mut.getFI()[IJE] * sigma);
+                mus = (mu.getFI()[IJS] + mut.getFI()[IJS] * sigma);
+                mun = (mu.getFI()[IJN] + mut.getFI()[IJN] * sigma);
 
                 gamw
                         = faceValue(
@@ -159,9 +177,25 @@ public class OmegaEquation {
                 coe.getAN()[IJ] = (1 - flag.getNorth()) * (Math.max(-Fn, 0.0) + Dn);
 
                 //setting add source.
+                alpha
+                        = SSTKOmegaModel.getPhi(
+                                SSTKOmegaModel.alpha1,
+                                SSTKOmegaModel.alpha2,
+                                F1SST.getFI()[IJ]
+                        );
+
+                beta
+                        = SSTKOmegaModel.getPhi(
+                                SSTKOmegaModel.beta1,
+                                SSTKOmegaModel.beta2,
+                                F1SST.getFI()[IJ]
+                        );
+
                 Sp
-                        = -KOmegaModel.beta * rho.getFI()[IJ]
-                        * omega.getFI()[IJ];
+                        = -beta * rho.getFI()[IJ]
+                        * omega.getFI()[IJ]
+                        + alpha * Math.min(0, GEN.getFI()[IJ])
+                        / (mut.getFI()[IJ] * omega.getFI()[IJ]);
 
                 Spad
                         = BoundaryCondition.spadWest(
@@ -185,8 +219,9 @@ public class OmegaEquation {
                         - Sp * volume;
 
                 Sc
-                        = KOmegaModel.alpha * (mut.getFI()[IJ] * S.getFI()[IJ])
-                        * omega.getFI()[IJ] / k.getFI()[IJ];
+                        = alpha * GEN.getFI()[IJ] / mut.getFI()[IJ]
+                        + 2.0 * (1 - F1SST.getFI()[IJ]) * SSTKOmegaModel.sigmaOmega2
+                        * rho.getFI()[IJ] / omega.getFI()[IJ] * DOMEGA.getFI()[IJ];
 
                 Scad
                         = BoundaryCondition.scadWest(
@@ -249,9 +284,18 @@ public class OmegaEquation {
 
                     }
 
-                    double value
-                            = Math.sqrt(max(0, k.getFI()[IJ]))
-                            / (KOmegaModel.Cu25 * Turbulence.CAPPA * distance);
+//                    double value
+//                            = Math.sqrt(max(0, k.getFI()[IJ]))
+//                            / (SSTKOmegaModel.Cu25 * Turbulence.CAPPA * distance);
+                    double WLOG
+                            = sqrt(max(0, k.getFI()[IJ]))
+                            / (SSTKOmegaModel.Cu25 * Turbulence.CAPPA * distance);
+
+                    double WVIS
+                            = 6.0 * mu.getFI()[IJ]
+                            / (rho.getFI()[IJ] * SSTKOmegaModel.beta1 * distance * distance);
+//
+                    double value = sqrt(WLOG * WLOG + WVIS * WVIS);
 //ED(IJP)=SQRT(MAX(ZERO,TE(IJP)))/(CMU25*CAPPA*DN(IW))
 //6.0 * mu[X][Y][Z] / (rho[X][Y][Z] * beta * DN * DN);
                     coe.getAP()[IJ] = 1.0;
@@ -266,7 +310,9 @@ public class OmegaEquation {
                         = coe.getS()[IJ]
                         + (URFFI - 1.0) * coe.getAP()[IJ]
                         * omega.getFI()[IJ];
+
                 coe.getAP()[IJ] = coe.getAP()[IJ] * URFFI;
+
             }
         }
     }
