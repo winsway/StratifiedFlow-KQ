@@ -147,7 +147,7 @@ public class TurbulenceSolver {
                 IJ = mesh.getCellIndex(X, Y);
                 mueff.getFI()[IJ]
                         = (mum.getFI()[IJ]
-                        + 0.20 * turbulence.getEddyViscosity().getFI()[IJ]);
+                        + 0.22 * turbulence.getEddyViscosity().getFI()[IJ]);
             }
         }
     }

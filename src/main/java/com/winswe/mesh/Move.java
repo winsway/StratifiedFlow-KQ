@@ -16,5 +16,5 @@ public interface Move {
     /**
      * 变化动网格
      */
-    public void move();
+    public void move(double hl);
 }

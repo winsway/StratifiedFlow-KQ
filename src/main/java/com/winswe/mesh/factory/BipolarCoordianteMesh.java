@@ -78,7 +78,7 @@ public class BipolarCoordianteMesh
     /**
      *
      */
-    private final double theta1;
+    private double theta1;
 
     /**
      *
@@ -88,12 +88,12 @@ public class BipolarCoordianteMesh
     /**
      *
      */
-    private final double theta3;
+    private double theta3;
 
     /**
      *
      */
-    private final double a;
+    private double a;
 
     /**
      * 液位高度的网格数
@@ -337,8 +337,12 @@ public class BipolarCoordianteMesh
     }
 
     @Override
-    public void move() {
+    public void move(double hl) {
 
+        theta1 = acos(1.0 - 2 * hl);
+        theta3 = theta1 + PI;
+        a = diameter / 2 * Math.sin(theta1);
+        this.blockMesh();
     }
 
     @Override

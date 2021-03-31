@@ -106,7 +106,9 @@ public abstract class Turbulence {
                         getJSONObject("turbulence").
                         getString("Model");
 
-        if ("KEpsilon".equals(name)) {
+        if ("Laminar".equals(name)) {
+            return null;
+        } else if ("KEpsilon".equals(name)) {
             return new KEpsilonModel(velocity, dynamicViscosity, density, mesh, iOobject);
         } else if ("KOmega".equals(name)) {
             return new KOmegaModel(velocity, dynamicViscosity, density, mesh, iOobject);
@@ -115,7 +117,7 @@ public abstract class Turbulence {
         } else {
             throw new ArithmeticException("without the solver name");
         }
-        
+
     }
 
     /**

@@ -12,7 +12,7 @@ package com.winswe.mesh;
  * @author winswe <halo.winswe@gmail.com>
  * @date 2021年2月12日 下午3:11:21
  */
-public interface Structed2D {
+public interface Structed2D extends Move {
 
     /**
      * 返回网格索引

@@ -160,7 +160,7 @@ public class Control {
         String dirName = F1.position + F1.toString();
         Writer.createDir(dirName);
         String title = "pressure and liquid high";
-        String fileName = dirName + title + "." + "txt";
+        String fileName = dirName + "/" + title + "." + "txt";
         pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fileName)));
 //        
         pw.printf("Gwater = %e\t Goil = %e\t\n", Gwater, Goil);
@@ -209,8 +209,8 @@ public class Control {
             xnew = xold + (G * Fy - F * Gy) / (Fx * Gy - Gx * Fy);
             ynew = yold + (F * Gx - G * Fx) / (Fx * Gy - Gx * Fy);
 //          
-            xnew = Modified(xnew, xold, 1e-3, 10000000);
-            ynew = Modified(ynew, yold, 0.1, 0.9);
+//            xnew = Modified(xnew, xold, 1e-3, 10000000);
+//            ynew = Modified(ynew, yold, 0.1, 0.9);
             xold = xnew;
             yold = ynew;
 //            
