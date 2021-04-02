@@ -3,27 +3,29 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.winswe.onedimension;
+package com.winswe.cases.single.turbulent.sstkomega;
 
+import com.winswe.cases.single.turbulent.komega.*;
 import com.cup.io.DataFileWriter;
-
+import com.winswe.onedimension.SingleFlowEquation;
+import com.winswe.solver.*;
 import java.io.File;
 import java.io.IOException;
 
 /**
- * 用于测试层流求解算法和解析解的区别
  *
- * @author winsway
+ * @author winswe <halo.winswe@gmail.com>
+ * @date 2021年3月31日 下午8:49:13
  */
-public class Turbulence {
+public class Re5000WaterSSTKOmegaTest {
 
-    final String position = "./winsway/";
-    final String case_ = "Re7777Water";
+    final String position = "./tutorials/case/single/Re5000Water";
+    final String caseName = "sstkomega";
 
     /**
      * Reynolds nubmer
      */
-    final double Re =15000.0;
+    final double Re = 5000.0;
 
     final double density = 1000;
 
@@ -31,7 +33,7 @@ public class Turbulence {
 
     final double diameter = 0.0243;
 
-    final double roughness = 8e-5;
+    final double roughness = 2e-4;
 
     final double length = 1.0;
 
@@ -54,7 +56,7 @@ public class Turbulence {
      * @throws java.io.IOException
      */
     public void describle() throws IOException {
-        File file = new File(position + case_ + "/", "readme.txt");
+        File file = new File(position + "/" + caseName + "/", "readme.txt");
         try ( DataFileWriter des = new DataFileWriter(file)) {
             des.fileWriter.format("Volume Flowrate Q       = %.4e m3/s\n", water.getVolumeFlowrate());
             des.fileWriter.format("Average Velocity U      = %.4e m/s\n", water.getAverageVelocity());
@@ -65,9 +67,28 @@ public class Turbulence {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        Turbulence test = new Turbulence();
-        test.ondDcac();
-        test.describle();
+    public void flowField() {
+        System.out.println("readConfigure");
+
+        TwoPhaseSolver twoPhaseSolver = new TwoPhaseSolver(position, caseName);
+        twoPhaseSolver.readConfigure();
+
+        //for mesh
+        twoPhaseSolver.createMesh();
+        twoPhaseSolver.outPutMesh();
+
+        //for field
+        twoPhaseSolver.createField();
+        twoPhaseSolver.startIteration();
+        twoPhaseSolver.outPutFields();
     }
+
+    public static void main(String[] args) throws IOException {
+        Re5000WaterSSTKOmegaTest temp = new Re5000WaterSSTKOmegaTest();
+        temp.ondDcac();
+        temp.describle();
+        temp.flowField();
+
+    }
+
 }
