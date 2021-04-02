@@ -8,12 +8,12 @@
         "Oil": {
             "Viscosity": 1e-3,
             "Density": 1000,
-            "FlowRate": 0.0000477129
+            "FlowRate": 0.00011451
         },
         "Water": {
             "Viscosity": 1e-3,
             "Density": 1000,
-            "FlowRate": 0.0000477129
+            "FlowRate": 0.00011451
         }
     },
     "Field": {
