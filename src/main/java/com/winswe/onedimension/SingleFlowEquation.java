@@ -51,7 +51,7 @@ public class SingleFlowEquation {
     /**
      * chose different method to calculate pressure drop
      */
-    enum Type {
+    public enum Type {
         Darcy,
         Repinzon
     }
@@ -86,7 +86,7 @@ public class SingleFlowEquation {
      * @return Reynolds Number
      */
     public double getReynoldsNumber() {
-        return this.calculateReynoldsNumberByKinematicViscosity(
+        return SingleFlowEquation.calculateReynoldsNumberByKinematicViscosity(
                 volumeFlowrate,
                 diameter,
                 dynamicViscosity / density
@@ -159,6 +159,7 @@ public class SingleFlowEquation {
     }
 
     /**
+     * Laminar Zone
      *
      * @param Re renolds number
      * @return &lambda;-laminar Zone Friction Factor
@@ -168,6 +169,7 @@ public class SingleFlowEquation {
     }
 
     /**
+     * Hydraulically Smooth Zone
      *
      * @param Re renolds number
      * @return &lambda;-Hydraulically Smooth Zone Friction Factor
@@ -177,7 +179,7 @@ public class SingleFlowEquation {
     }
 
     /**
-     * 混合摩擦
+     * Mixed Friction Zone
      *
      * @param Re renolds number
      * @param e roughness m
@@ -190,7 +192,7 @@ public class SingleFlowEquation {
     }
 
     /**
-     * 水力粗糙
+     * Rough Zone
      *
      * @param e roubhness m
      * @param D diameter，m

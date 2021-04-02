@@ -140,14 +140,20 @@ public class TurbulenceSolver {
     }
 
     public void modifiedViscosity() {
+        double gamma
+                = iOobject.getJsonObject().
+                        getJSONObject("turbulence").
+                        getDoubleValue("gamma");
+
         turbulence.updateMut();
+
         int IJ;
         for (int Y = 1; Y <= mesh.getNY(); ++Y) {
             for (int X = 1; X <= mesh.getNX(); ++X) {
                 IJ = mesh.getCellIndex(X, Y);
                 mueff.getFI()[IJ]
                         = (mum.getFI()[IJ]
-                        + 0.22 * turbulence.getEddyViscosity().getFI()[IJ]);
+                        + gamma * turbulence.getEddyViscosity().getFI()[IJ]);
             }
         }
     }

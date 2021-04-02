@@ -23,7 +23,7 @@ public class Turbulence {
     /**
      * Reynolds nubmer
      */
-    final double Re = 7777.0;
+    final double Re = 15000.0;
 
     final double density = 1000;
 
@@ -31,7 +31,7 @@ public class Turbulence {
 
     final double diameter = 0.0243;
 
-    final double roughness = 2e-4;
+    final double roughness = 1e-4;
 
     final double length = 1.0;
 

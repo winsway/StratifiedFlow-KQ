@@ -1,0 +1,16 @@
+Qwater   = 1.9085e-05	  Qoil = 1.9085e-05	
+
+F dpdz   = 1.0000e+00	  hl   = 5.0000e-01	
+Qwater   = 4.2805e-06	  Qoil = 4.2805e-06	
+Fx dpdz  = 1.0100e+00	  hl    = 5.0000e-01	
+Qwater   = 4.3233e-06	  Qoil  = 4.3233e-06	
+Fy dpdz  = 1.0000e+00	  hl    = 5.0500e-01	
+Qwater   = 4.3533e-06	  Qoil  = 4.2078e-06	
+
+F dpdz   = 4.4584e+00	  hl   = 5.0000e-01	
+Qwater   = 1.9084e-05	  Qoil = 1.9084e-05	
+Fx dpdz  = 4.5030e+00	  hl    = 5.0000e-01	
+Qwater   = 1.9275e-05	  Qoil  = 1.9275e-05	
+Fy dpdz  = 4.4584e+00	  hl    = 5.0500e-01	
+Qwater   = 1.9409e-05	  Qoil  = 1.8760e-05	
+

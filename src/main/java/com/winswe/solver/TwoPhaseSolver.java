@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.winswe.turbulence.Turbulence;
 import com.winswe.field.VolScalarField;
 import com.winswe.io.IOobject;
-import com.winswe.io.Writer;
 import com.winswe.matrix.solve.SimpleControl;
 import com.winswe.mesh.Structed2D;
 import com.winswe.mesh.factory.BipolarCoordianteMesh;
@@ -191,6 +190,11 @@ public class TwoPhaseSolver {
     }
 
     public void modifiedViscosity() {
+        double gamma
+                = iOobject.getJsonObject().
+                        getJSONObject("turbulence").
+                        getDoubleValue("gamma");
+
         turbulence.updateMut();
         int IJ;
         for (int Y = 1; Y <= mesh.getNY(); ++Y) {
@@ -198,7 +202,7 @@ public class TwoPhaseSolver {
                 IJ = mesh.getCellIndex(X, Y);
                 mueff.getFI()[IJ]
                         = (mum.getFI()[IJ]
-                        + 0.22 * turbulence.getEddyViscosity().getFI()[IJ]);
+                        + gamma * turbulence.getEddyViscosity().getFI()[IJ]);
             }
         }
     }
@@ -229,7 +233,7 @@ public class TwoPhaseSolver {
 
     private double Qoil, Qwater;
 
-    void startIteration() {
+    public void startIteration() {
 
         double errorWater, errorOil;
         double xold = 1, yold = 0.5;

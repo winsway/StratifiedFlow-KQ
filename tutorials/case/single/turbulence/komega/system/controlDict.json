@@ -66,6 +66,7 @@
     },
     "turbulence": {
         "Model": "KOmega",
+        "gamma": 0.22,
         "sigmak": 2.0,
         "sigmaOmega": 2.0,
         "Cu": 0.09,

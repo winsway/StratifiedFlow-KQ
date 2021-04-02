@@ -17,8 +17,8 @@ import java.io.IOException;
  */
 public class Laminar {
 
-    final String position = "./winsway/";
-    final String case_ = "Re1000Water";
+    final String position = "./tutorials/";
+    final String case_ = "Re100Water";
 
     /**
      * Reynolds nubmer
