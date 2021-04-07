@@ -6,7 +6,7 @@
 package com.winswe.turbulence.komega;
 
 import com.alibaba.fastjson.JSONObject;
-import static com.cup.util.Flux.faceValue;
+import static com.winswe.util.Flux.faceValue;
 import com.winswe.boundary.BoundaryCondition;
 import com.winswe.field.VolScalarField;
 import com.winswe.io.IOobject;

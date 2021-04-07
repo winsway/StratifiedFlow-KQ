@@ -5,7 +5,7 @@
  */
 package com.winswe.onedimension;
 
-import com.cup.io.DataFileWriter;
+import com.winswe.io.DataFileWriter;
 
 import java.io.File;
 import java.io.IOException;

@@ -5,7 +5,7 @@
  */
 package com.winswe.cases.single.laminar;
 
-import com.cup.io.DataFileWriter;
+import com.winswe.io.DataFileWriter;
 import com.winswe.onedimension.SingleFlowEquation;
 import com.winswe.solver.*;
 import java.io.File;

@@ -1,7 +1,5 @@
 package com.winswe.turbulence;
 
-import static com.cup.turbulence.Turbulence.CAPPA;
-import static com.cup.turbulence.Turbulence.ELOG;
 import com.winswe.field.VolScalarField;
 import com.winswe.io.IOobject;
 import com.winswe.matrix.solve.SolverPerformance;

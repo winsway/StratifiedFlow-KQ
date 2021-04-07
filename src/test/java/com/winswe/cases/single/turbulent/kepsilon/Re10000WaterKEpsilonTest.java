@@ -5,7 +5,7 @@
  */
 package com.winswe.cases.single.turbulent.kepsilon;
 
-import com.cup.io.DataFileWriter;
+import com.winswe.io.DataFileWriter;
 import com.winswe.onedimension.SingleFlowEquation;
 import com.winswe.solver.*;
 import java.io.File;
@@ -32,7 +32,7 @@ public class Re10000WaterKEpsilonTest {
 
     final double diameter = 0.0243;
 
-    final double roughness = 2e-4;
+    final double roughness = 1e-4;
 
     final double length = 1.0;
 
