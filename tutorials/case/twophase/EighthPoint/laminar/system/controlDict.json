@@ -1,0 +1,154 @@
+{
+    "geometric": {
+        "diameter": 0.0243,
+        "NX": 50,
+        "NY": 50
+    },
+    "transportProperties": {
+        "Oil": {
+            "Viscosity": 1.6e-3,
+            "Density": 801,
+            "FlowRate": 1.0202E-04
+        },
+        "Water": {
+            "Viscosity": 1e-3,
+            "Density": 1000,
+            "FlowRate": 1.5304E-04
+        }
+    },
+    "Field": {
+        "Velocity": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": "noSlip"
+            }
+        },
+        "Effective Viscosity": {
+            "internal value": 1e-3,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "Dynamic Viscosity": {
+            "internal value": 1e-3,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "Density": {
+            "internal value": 1000,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "Phi": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "Eddy Viscosity": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "K": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": "noSlip"
+            }
+        },
+        "Omega": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": "ZeroGradient"
+            }
+        },
+        "S": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "DOMEGA": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "F1SST": {
+            "internal value": 1.0,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "distance": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "GEN": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": null
+            }
+        }
+    },
+    "turbulence": {
+        "Model": "Laminar",
+        "gamma": 0.22,
+        "a1": 0.31,
+        "alpha1": 0.5555,
+        "alpha2": 0.44,
+        "beta1": 0.0750,
+        "beta2": 0.0828,
+        "sigmak1": 0.85,
+        "sigmak2": 1.0,
+        "sigmaOmega1": 0.5,
+        "sigmaOmega2": 0.856,
+        "betaStar": 0.09,
+        "Cu": 0.09,
+        "CTRANS": 11.63
+    },
+    "U Equation": {
+        "Solve Name": "SIPSOL",
+        "Relax Factor": 1.0,
+        "Convergence Criterion": 1e-6,
+        "Sub Loop Number": 5
+    },
+    "K Equation": {
+        "Solve Name": "SIPSOL",
+        "Relax Factor": 0.9,
+        "Convergence Criterion": 1e-6,
+        "Sub Loop Number": 10
+    },
+    "Omega Equation": {
+        "Solve Name": "SIPSOL",
+        "Relax Factor": 0.90,
+        "Convergence Criterion": 1e-6,
+        "Sub Loop Number": 10
+    },
+    "IO": {
+        "Mesh": {
+            "CalculateGeo": true,
+            "PhysicalGeo": true
+        },
+        "Field": {
+            "Velocity": true,
+            "Effective Viscosity": true,
+            "Dynamic Viscosity": true,
+            "Density": true,
+            "Phi": true,
+            "Eddy Viscosity": true,
+            "K": true,
+            "Omega": true,
+            "S": true,
+            "DOMEGA": false,
+            "F1SST": true,
+            "distance": true,
+            "GEN": true
+        }
+    }
+}

@@ -34,7 +34,7 @@ public class BasicInformation {
 
     SingleFlowEquation water;
 
-    double Uoil = 0.33;
+    double Uoil = 0.55;
     double Uwater = 0.11;
 
     public void ondDcac() {
