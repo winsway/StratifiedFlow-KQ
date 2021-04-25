@@ -110,18 +110,20 @@ public class TwoPhaseSolver {
         Qwater = jSONObject.getJSONObject("Water").getDoubleValue("FlowRate");
 
         int IJ;
-        for (int Y = 1; Y <= mesh.getNY(); ++Y) {
-            for (int X = 1; X <= mesh.getNX(); ++X) {
+        for (int Y = 0; Y <= mesh.getNY() + 1; ++Y) {
+            for (int X = 0; X <= mesh.getNX() + 1; ++X) {
                 IJ = mesh.getCellIndex(X, Y);
 
                 if (Y <= mesh.getNY() / 2) {
                     phi.getFI()[IJ] = -1;
                     density.getFI()[IJ] = jSONObject.getJSONObject("Oil").getDoubleValue("Density");
                     mum.getFI()[IJ] = jSONObject.getJSONObject("Oil").getDoubleValue("Viscosity");
+                    mueff.getFI()[IJ] = jSONObject.getJSONObject("Oil").getDoubleValue("Viscosity");
                 } else {
                     phi.getFI()[IJ] = 1;
                     density.getFI()[IJ] = jSONObject.getJSONObject("Water").getDoubleValue("Density");
                     mum.getFI()[IJ] = jSONObject.getJSONObject("Water").getDoubleValue("Viscosity");
+                    mueff.getFI()[IJ] = jSONObject.getJSONObject("Water").getDoubleValue("Viscosity");
                 }
             }
         }
@@ -296,7 +298,7 @@ public class TwoPhaseSolver {
                 errorWater = abs((water) / Qwater);
                 errorOil = abs((oil) / Qoil);
 
-            } while (errorWater >= 1e-3 || errorOil >= 1e-3);
+            } while (errorWater >= 1e-5 || errorOil >= 1e-5);
 
             pw.close();
 

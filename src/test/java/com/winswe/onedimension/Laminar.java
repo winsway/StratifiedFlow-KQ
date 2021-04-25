@@ -29,7 +29,7 @@ public class Laminar {
 
     final double dynamicViscosity = 1e-3;
 
-    final double diameter = 0.0243;
+    final double diameter = 0.05;
 
     final double roughness = 2e-4;
 
