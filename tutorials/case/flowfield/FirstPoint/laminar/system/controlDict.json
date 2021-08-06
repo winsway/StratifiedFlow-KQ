@@ -1,8 +1,8 @@
 {
     "geometric": {
         "diameter": 0.056,
-        "NX": 50,
-        "NY": 50
+        "NX": 80,
+        "NY": 80
     },
     "transportProperties": {
         "Oil": {
@@ -98,7 +98,7 @@
     },
     "turbulence": {
         "Model": "Laminar",
-        "gamma": 0.22,
+        "gamma": 0.15,
         "a1": 0.31,
         "alpha1": 0.5555,
         "alpha2": 0.44,

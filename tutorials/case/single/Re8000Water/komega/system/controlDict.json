@@ -1,8 +1,8 @@
 {
     "geometric": {
         "diameter": 0.0243,
-        "NX": 50,
-        "NY": 50
+        "NX": 80,
+        "NY": 80
     },
     "transportProperties": {
         "Oil": {
@@ -74,7 +74,7 @@
     },
     "turbulence": {
         "Model": "KOmega",
-        "gamma": 0.22,
+        "gamma": 0.15,
         "sigmak": 2.0,
         "sigmaOmega": 2.0,
         "Cu": 0.09,

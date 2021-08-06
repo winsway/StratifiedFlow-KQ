@@ -1,37 +1,44 @@
 Qwater   = 6.1575e-04	  Qoil = 6.1575e-04	
 
 F dpdz   = 1.0000e+00	  hl   = 5.0000e-01	
-Qwater   = 4.7371e-05	  Qoil = 4.4831e-05	
+Qwater   = 4.7943e-05	  Qoil = 4.4266e-05	
 Fx dpdz  = 1.0100e+00	  hl    = 5.0000e-01	
-Qwater   = 4.7704e-05	  Qoil  = 4.5155e-05	
+Qwater   = 4.8282e-05	  Qoil  = 4.4586e-05	
 Fy dpdz  = 1.0000e+00	  hl    = 5.0500e-01	
-Qwater   = 4.8102e-05	  Qoil  = 4.4116e-05	
+Qwater   = 4.8689e-05	  Qoil  = 4.3568e-05	
 
-F dpdz   = 1.8332e+01	  hl   = 4.4049e-01	
-Qwater   = 2.8169e-04	  Qoil = 4.0099e-04	
-Fx dpdz  = 1.8515e+01	  hl    = 4.4049e-01	
-Qwater   = 2.8356e-04	  Qoil  = 4.0368e-04	
-Fy dpdz  = 1.8332e+01	  hl    = 4.4490e-01	
-Qwater   = 2.8610e-04	  Qoil  = 3.9635e-04	
+F dpdz   = 1.8293e+01	  hl   = 3.7753e-01	
+Qwater   = 2.2168e-04	  Qoil = 4.5024e-04	
+Fx dpdz  = 1.8476e+01	  hl    = 3.7753e-01	
+Qwater   = 2.2315e-04	  Qoil  = 4.5322e-04	
+Fy dpdz  = 1.8293e+01	  hl    = 3.8130e-01	
+Qwater   = 2.2535e-04	  Qoil  = 4.4665e-04	
 
-F dpdz   = 4.0596e+01	  hl   = 5.4760e-01	
-Qwater   = 6.6055e-04	  Qoil = 4.9379e-04	
-Fx dpdz  = 4.1002e+01	  hl    = 5.4760e-01	
-Qwater   = 6.6490e-04	  Qoil  = 4.9709e-04	
-Fy dpdz  = 4.0596e+01	  hl    = 5.5307e-01	
-Qwater   = 6.7005e-04	  Qoil  = 4.8435e-04	
+F dpdz   = 4.1100e+01	  hl   = 5.9421e-01	
+Qwater   = 7.5254e-04	  Qoil = 4.0749e-04	
+Fx dpdz  = 4.1511e+01	  hl    = 5.9421e-01	
+Qwater   = 7.5742e-04	  Qoil  = 4.1018e-04	
+Fy dpdz  = 4.1100e+01	  hl    = 6.0015e-01	
+Qwater   = 7.6282e-04	  Qoil  = 3.9795e-04	
 
-F dpdz   = 4.4719e+01	  hl   = 4.9632e-01	
-Qwater   = 6.0944e-04	  Qoil = 6.2271e-04	
-Fx dpdz  = 4.5166e+01	  hl    = 4.9632e-01	
-Qwater   = 6.1345e-04	  Qoil  = 6.2687e-04	
-Fy dpdz  = 4.4719e+01	  hl    = 5.0129e-01	
-Qwater   = 6.1856e-04	  Qoil  = 6.1332e-04	
+F dpdz   = 4.5730e+01	  hl   = 4.8340e-01	
+Qwater   = 5.9852e-04	  Qoil = 6.3407e-04	
+Fx dpdz  = 4.6188e+01	  hl    = 4.8340e-01	
+Qwater   = 6.0240e-04	  Qoil  = 6.3821e-04	
+Fy dpdz  = 4.5730e+01	  hl    = 4.8823e-01	
+Qwater   = 6.0758e-04	  Qoil  = 6.2536e-04	
 
-F dpdz   = 4.4693e+01	  hl   = 4.9988e-01	
+F dpdz   = 4.5628e+01	  hl   = 4.9305e-01	
+Qwater   = 6.1573e-04	  Qoil = 6.1577e-04	
+Fx dpdz  = 4.6084e+01	  hl    = 4.9305e-01	
+Qwater   = 6.1972e-04	  Qoil  = 6.1979e-04	
+Fy dpdz  = 4.5628e+01	  hl    = 4.9798e-01	
+Qwater   = 6.2498e-04	  Qoil  = 6.0691e-04	
+
+F dpdz   = 4.5627e+01	  hl   = 4.9306e-01	
 Qwater   = 6.1575e-04	  Qoil = 6.1575e-04	
-Fx dpdz  = 4.5140e+01	  hl    = 4.9988e-01	
-Qwater   = 6.1980e-04	  Qoil  = 6.1986e-04	
-Fy dpdz  = 4.4693e+01	  hl    = 5.0488e-01	
-Qwater   = 6.2494e-04	  Qoil  = 6.0631e-04	
+Fx dpdz  = 4.6084e+01	  hl    = 4.9306e-01	
+Qwater   = 6.1974e-04	  Qoil  = 6.1977e-04	
+Fy dpdz  = 4.5627e+01	  hl    = 4.9799e-01	
+Qwater   = 6.2500e-04	  Qoil  = 6.0688e-04	
 

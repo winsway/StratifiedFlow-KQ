@@ -7,7 +7,7 @@ package com.winswe.mesh;
  */
 /**
  *
- * 结构网格
+ * structure mesh
  *
  * @author winswe <halo.winswe@gmail.com>
  * @date 2021年2月12日 下午3:11:21
@@ -15,48 +15,49 @@ package com.winswe.mesh;
 public interface Structed2D extends Move {
 
     /**
-     * 返回网格索引
+     * return mesh index
      *
-     * @param I 横坐表
-     * @param J 纵坐标
-     * @return 索引值
+     * @param I x index
+     * @param J y index
+     * @return index
      */
     default int getCellIndex(int I, int J) {
-        //两边有虚网格
+        //two side with ghost cell
         return (I) + (J) * (this.getNX() + 1);
     }
 
     /**
-     * 网格离散
+     * mesh discrete
      */
     public void blockMesh();
 
     /**
      *
-     * @return
+     * @return number of X direction cell
      */
     public int getNX();
 
     /**
      *
-     * @return
+     * @return number of Y direction cell
      */
     public int getNY();
 
     /**
+     * physical coordinate X
      *
-     * @param x1 计算坐标x1
-     * @param x2 计算坐标x2
-     * @return 物理坐标系X
+     * @param x1 computing coordinate x1
+     * @param x2 computing coordinate x2
+     * @return physical coordinate X
      */
     public double X(double x1, double x2);
 
     /**
      *
      *
-     * @param x1 计算坐标x1
-     * @param x2 计算坐标x2
-     * @return 物理坐标系Y
+     * @param x1 computing coordinate x1
+     * @param x2 computing coordinate x2
+     * @return physical coordinate Y
      */
     public double Y(double x1, double x2);
 
@@ -92,14 +93,36 @@ public interface Structed2D extends Move {
      */
     public double getVolume(int X, int Y);
 
+    /**
+     *
+     * @return
+     */
     public double[] getDYV();
 
+    /**
+     *
+     * @return
+     */
     public double[] getDXP();
 
+    /**
+     *
+     * @return
+     */
     public double[] getDXU();
 
+    /**
+     *
+     * @return
+     */
     public double[] getDYP();
 
+    /**
+     *
+     * @param x1
+     * @param x2
+     * @return
+     */
     public double alpha(double x1, double x2);
 
 }

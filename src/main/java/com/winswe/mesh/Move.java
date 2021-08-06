@@ -6,7 +6,7 @@
 package com.winswe.mesh;
 
 /**
- * 动网格接口
+ * moving mesh interface
  *
  * @author winswe <halo.winswe@gmail.com>
  * @date 2021年2月13日 上午9:38:31
@@ -14,7 +14,9 @@ package com.winswe.mesh;
 public interface Move {
 
     /**
-     * 变化动网格
+     * change mesh
+     *
+     * @param hl liquid hold up
      */
     public void move(double hl);
 }

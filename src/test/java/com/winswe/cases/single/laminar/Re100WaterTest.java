@@ -69,7 +69,7 @@ public class Re100WaterTest {
     public void flowField() {
         System.out.println("readConfigure");
 
-        TwoPhaseSolver twoPhaseSolver = new TwoPhaseSolver(position, caseName);
+        TwoPhaseSolverForOneCase twoPhaseSolver = new TwoPhaseSolverForOneCase(position, caseName);
         twoPhaseSolver.readConfigure();
 
         //for mesh

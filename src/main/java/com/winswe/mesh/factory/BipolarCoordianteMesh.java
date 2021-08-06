@@ -12,39 +12,31 @@ import static java.lang.Math.cosh;
 import static java.lang.Math.sin;
 import static java.lang.Math.sinh;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
- * 双极坐标网格
+ * bipolar coordinate mesh
  *
  * @author winswe <halo.winswe@gmail.com>
  * @date 2021年2月12日 下午3:13:12
  */
-public class BipolarCoordianteMesh
-        extends AbstractMesh
-        implements
-        Structed2D, Move {
+public class BipolarCoordianteMesh extends AbstractMesh implements Structed2D, Move {
 
     /**
-     * 单个网格大小
+     * a single cell size
      */
     private final double deltaX1;
 
     private final double deltaX2;
 
     /**
-     * 网格线的位置
+     * position of grid line
      */
     private final double[] lineX1;
 
     private final double[] lineX2;
 
     /**
-     * 计算节点的位置
+     * position of node
      */
     private final double[] pointX1;
 
@@ -71,7 +63,8 @@ public class BipolarCoordianteMesh
     private double[] distancePointX2;
 
     /**
-     * 管径，单位m
+     *
+     * diameter, unit is meter.
      */
     private final double diameter;
 
@@ -111,10 +104,41 @@ public class BipolarCoordianteMesh
     private final int NY;
 
     /**
-     * 几何参数
+     * configure file
      */
     private final JSONObject geometricJson;
 
+    /**
+     * construct by configure file and liquid holdup
+     *
+     * @param ioObject
+     * @param hl
+     */
+    public BipolarCoordianteMesh(IOobject ioObject, double hl) {
+        geometricJson = ioObject.getJsonObject().getJSONObject("geometric");
+        //seting configure parameter        
+        diameter = geometricJson.getDoubleValue("diameter");
+        theta1 = acos(1.0 - 2 * hl);
+        theta3 = theta1 + PI;
+        a = diameter / 2 * Math.sin(theta1);
+        //setting number of gird
+        NX = geometricJson.getIntValue("NX");
+        NY = geometricJson.getIntValue("NY");
+        numberHLMesh = NY / 2;
+        //position of grid
+        this.lineX1 = new double[NX + 1];
+        this.lineX2 = new double[NY + 1];
+        this.pointX1 = new double[NX + 2];
+        this.pointX2 = new double[NY + 2];
+        deltaX1 = 12 / NX;
+        deltaX2 = PI / NY;
+    }
+
+    /**
+     * construct by configure file
+     *
+     * @param ioObject
+     */
     public BipolarCoordianteMesh(IOobject ioObject) {
         geometricJson = ioObject.getJsonObject().getJSONObject("geometric");
         //设定几何参数        
@@ -136,11 +160,12 @@ public class BipolarCoordianteMesh
     }
 
     /**
-     * 雅可比因子
      *
-     * @param x x坐标
-     * @param y y坐标
-     * @return 雅可比因子大小
+     * Jacobian factor
+     *
+     * @param x x coordinate
+     * @param y y coordiante
+     * @return Jacobian factor
      */
     public double Jacobi(double x, double y) {
         double c = cosh(x) * cos(y) - 1.0;
@@ -149,11 +174,12 @@ public class BipolarCoordianteMesh
     }
 
     /**
-     * eta方向的度规系数，放映了eta方向网格的疏密程度
+     * The scala coefficient in the eta direction shows the density of the grid
+     * in the eta direction
      *
      * @param x x坐标
      * @param y y坐标
-     * @return eta方向的度规系数
+     * @return Metric coefficient in eta direction
      */
     @Override
     public double alpha(double x, double y) {
@@ -187,6 +213,7 @@ public class BipolarCoordianteMesh
     }
 
     /**
+     * cell volume
      *
      * @param indexX X方向位置索引
      * @param indexY Y方向位置索引
@@ -336,6 +363,10 @@ public class BipolarCoordianteMesh
         //Y方向设定完成
     }
 
+    /**
+     *
+     * @param hl
+     */
     @Override
     public void move(double hl) {
 
@@ -365,44 +396,84 @@ public class BipolarCoordianteMesh
         return a * Math.sin(x2) / (Math.cosh(x1) - Math.cos(x2));
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double[] getPointX1() {
         return pointX1;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double[] getPointX2() {
         return pointX2;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double[] getDYV() {
         return distanceLineX2;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double[] getDXP() {
         return distancePointX1;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double[] getDXU() {
         return distanceLineX1;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double[] getDYP() {
         return distancePointX2;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double[] getLineX1() {
         return lineX1;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double[] getLineX2() {
         return lineX2;
+    }
+
+    /**
+     *
+     * @return Diameter;
+     */
+    public double getDiameter() {
+        return diameter;
     }
 
 }

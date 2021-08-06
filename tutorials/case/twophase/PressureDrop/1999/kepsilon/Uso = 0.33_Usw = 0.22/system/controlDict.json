@@ -1,0 +1,120 @@
+{
+    "geometric": {
+        "diameter": 0.0243,
+        "NX": 80,
+        "NY": 80
+    },
+    "transportProperties": {
+        "Oil": {
+            "Viscosity": 1.6e-3,
+            "Density": 801,
+            "FlowRate": null
+        },
+        "Water": {
+            "Viscosity": 1e-3,
+            "Density": 1000,
+            "FlowRate": null
+        }
+    },
+    "Field": {
+        "Velocity": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": "noSlip"
+            }
+        },
+        "Effective Viscosity": {
+            "internal value": 1e-3,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "Dynamic Viscosity": {
+            "internal value": 1e-3,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "Density": {
+            "internal value": 1000,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "Phi": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "Eddy Viscosity": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": null
+            }
+        },
+        "K": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": "noSlip"
+            }
+        },
+        "Epsilon": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": "noSlip"
+            }
+        },
+        "S": {
+            "internal value": 0,
+            "boundary condition": {
+                "type": null
+            }
+        }
+    },
+    "turbulence": {
+        "Model": "KEpsilon",
+        "gamma": 0.15,
+        "sigmak": 1.0,
+        "sigmae": 1.3,
+        "Cu": 0.09,
+        "CTRANS": 11.63,
+        "Ce1": 1.44,
+        "Ce2": 1.92
+    },
+    "U Equation": {
+        "Solve Name": "SIPSOL",
+        "Relax Factor": 1.0,
+        "Convergence Criterion": 1e-6,
+        "Sub Loop Number": 5
+    },
+    "K Equation": {
+        "Solve Name": "SIPSOL",
+        "Relax Factor": 0.9,
+        "Convergence Criterion": 1e-6,
+        "Sub Loop Number": 10
+    },
+    "Epsilon Equation": {
+        "Solve Name": "SIPSOL",
+        "Relax Factor": 0.90,
+        "Convergence Criterion": 1e-6,
+        "Sub Loop Number": 10
+    },
+    "IO": {
+        "Mesh": {
+            "CalculateGeo": true,
+            "PhysicalGeo": true
+        },
+        "Field": {
+            "Velocity": true,
+            "Effective Viscosity": true,
+            "Dynamic Viscosity": true,
+            "Density": true,
+            "Phi": true,
+            "Eddy Viscosity": true,
+            "K": true,
+            "Epsilon": true,
+            "S": true
+        }
+    }
+}

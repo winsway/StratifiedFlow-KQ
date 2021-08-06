@@ -10,27 +10,11 @@ import com.winswe.mesh.Structed2D;
 import org.junit.Test;
 
 /**
+ * test bipolar coordinate mesh
  *
  * @author winswe <halo.winswe@gmail.com>
  */
 public class BipolarCoordianteMeshTest {
-
-    public BipolarCoordianteMeshTest() {
-    }
-
-    /**
-     * Test of gamma method, of class BipolarCoordianteMesh.
-     */
-    @Test
-    public void testGamma() {
-        System.out.println("gamma");
-        double x = 0.0;
-        double y = 0.0;
-        BipolarCoordianteMesh instance = null;
-        double expResult = 0.0;
-        double result = instance.gamma(x, y);
-
-    }
 
     /**
      * Test of blockMesh method, of class BipolarCoordianteMesh.
@@ -41,12 +25,27 @@ public class BipolarCoordianteMeshTest {
         String path = "./tutorials/mesh";
         String caseName = "BipolarCoordianteMesh";
         IOobject instance = new IOobject(path, caseName);
-        System.out.println("读取配置文件");
+        System.out.println("read configure file");
         instance.readConfigure();
-        System.out.println("生成网格");
+        System.out.println("generate mesh");
         Structed2D mesh = new BipolarCoordianteMesh(instance);
         mesh.blockMesh();
-        System.out.println("输出网格文件");
+        System.out.println("output mesh file");
+        instance.outPutMesh(mesh);
+    }
+
+    @Test
+    public void forDifferentLiqudLevel() {
+        System.out.println("blockMesh");
+        String path = "./tutorials/mesh";
+        String caseName = "for different liquid level";
+        IOobject instance = new IOobject(path, caseName);
+        System.out.println("read configure file");
+        instance.readConfigure();
+        System.out.println("generate mesh");
+        Structed2D mesh = new BipolarCoordianteMesh(instance, 0.3);
+        mesh.blockMesh();
+        System.out.println("output mesh file");
         instance.outPutMesh(mesh);
     }
 

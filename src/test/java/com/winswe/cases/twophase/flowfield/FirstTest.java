@@ -5,7 +5,7 @@
  */
 package com.winswe.cases.twophase.flowfield;
 
-import com.winswe.solver.TwoPhaseSolver;
+import com.winswe.solver.TwoPhaseSolverForOneCase;
 import org.junit.Test;
 
 /**
@@ -32,7 +32,7 @@ public class FirstTest {
         final String position = "./tutorials/case/flowfield/" + position_;
         final String caseName = "kepsilon";
 
-        TwoPhaseSolver twoPhaseSolver = new TwoPhaseSolver(position, caseName);
+        TwoPhaseSolverForOneCase twoPhaseSolver = new TwoPhaseSolverForOneCase(position, caseName);
         twoPhaseSolver.readConfigure();
 
         //for mesh
@@ -50,7 +50,7 @@ public class FirstTest {
         final String position = "./tutorials/case/flowfield/" + position_;
         final String caseName = "komega";
 
-        TwoPhaseSolver twoPhaseSolver = new TwoPhaseSolver(position, caseName);
+        TwoPhaseSolverForOneCase twoPhaseSolver = new TwoPhaseSolverForOneCase(position, caseName);
         twoPhaseSolver.readConfigure();
 
         //for mesh
@@ -68,7 +68,7 @@ public class FirstTest {
         final String position = "./tutorials/case/flowfield/" + position_;
         final String caseName = "sstkomega";
 
-        TwoPhaseSolver twoPhaseSolver = new TwoPhaseSolver(position, caseName);
+        TwoPhaseSolverForOneCase twoPhaseSolver = new TwoPhaseSolverForOneCase(position, caseName);
         twoPhaseSolver.readConfigure();
 
         //for mesh
@@ -86,7 +86,7 @@ public class FirstTest {
         final String position = "./tutorials/case/flowfield/" + position_;
         final String caseName = "laminar";
 
-        TwoPhaseSolver twoPhaseSolver = new TwoPhaseSolver(position, caseName);
+        TwoPhaseSolverForOneCase twoPhaseSolver = new TwoPhaseSolverForOneCase(position, caseName);
         twoPhaseSolver.readConfigure();
 
         //for mesh

@@ -52,7 +52,14 @@ public class SingleFlowEquation {
      * chose different method to calculate pressure drop
      */
     public enum Type {
+
+        /**
+         * darcy formula
+         */
         Darcy,
+        /**
+         * repizon formula
+         */
         Repinzon
     }
 
@@ -374,34 +381,66 @@ public class SingleFlowEquation {
         return (4 * volumeFlowrate) / (PI * diameter * nu);
     }
 
+    /**
+     *
+     * @return
+     */
     public double getVolumeFlowrate() {
         return volumeFlowrate;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getDensity() {
         return density;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getDynamicViscosity() {
         return dynamicViscosity;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getDiameter() {
         return diameter;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getRoughness() {
         return roughness;
     }
 
+    /**
+     *
+     * @return
+     */
     public static double getGravity() {
         return gravity;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getPipeCrossArea() {
         return pipeCrossArea;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getAverageVelocity() {
         return averageVelocity;
     }
